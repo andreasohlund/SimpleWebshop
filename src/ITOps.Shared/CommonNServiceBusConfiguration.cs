@@ -1,20 +1,17 @@
 ﻿namespace ITOps.Shared
 {
-    using System;
-    using Autofac;
     using Marketing.Internal;
     using NServiceBus;
     using NServiceBus.Logging;
     using NServiceBus.Transport;
     using Sales.Internal;
+    using System;
 
     public static class CommonNServiceBusConfiguration
     {
         static readonly ILog log = LogManager.GetLogger(typeof(CommonNServiceBusConfiguration));
 
-        public static void ApplyCommonNServiceBusConfiguration(this EndpointConfiguration endpointConfiguration,
-            IContainer autofacExternalContainer = null, bool enableMonitoring = true,
-            Action<TransportExtensions<RabbitMQTransport>> bridgeConfigurator = null)
+        public static void ApplyCommonNServiceBusConfiguration(this EndpointConfiguration endpointConfiguration, bool enableMonitoring = true)
         {
             // Transport configuration
             var rabbitMqConnectionString = Environment.GetEnvironmentVariable("NetCoreDemoRabbitMQTransport");
@@ -22,7 +19,7 @@
             if (string.IsNullOrEmpty(rabbitMqConnectionString))
             {
                 log.Info("Using Learning Transport");
-                var transport = endpointConfiguration.UseTransport<LearningTransport>();
+                var transport = endpointConfiguration.UseTransport(new LearningTransport());
                 ConfigureRouting(transport);
                 // Persistence Configuration
                 endpointConfiguration.UsePersistence<LearningPersistence>();
@@ -30,28 +27,18 @@
             else
             {
                 log.Info("Using RabbitMQ Transport");
-                var transport = endpointConfiguration.UseTransport<RabbitMQTransport>()
-                    .ConnectionString(rabbitMqConnectionString)
-                    .UseConventionalRoutingTopology();
+                var transport = endpointConfiguration.UseTransport(new RabbitMQTransport(RoutingTopology.Conventional(QueueType.Quorum), rabbitMqConnectionString));
 
                 ConfigureRouting(transport);
 
-                bridgeConfigurator?.Invoke(transport);
-
                 // Persistence Configuration
-                endpointConfiguration.UsePersistence<InMemoryPersistence>();
-            }
-
-            if (autofacExternalContainer != null)
-            {
-                endpointConfiguration.UseContainer<AutofacBuilder>(
-                    customizations => { customizations.ExistingLifetimeScope(autofacExternalContainer); });
+                endpointConfiguration.UsePersistence<LearningPersistence>(); //TODO
             }
 
             endpointConfiguration.EnableInstallers();
 
             // JSON Serializer
-            endpointConfiguration.UseSerialization<NewtonsoftSerializer>();
+            endpointConfiguration.UseSerialization<NewtonsoftJsonSerializer>();
 
             if (enableMonitoring)
             {
@@ -67,10 +54,9 @@
             }
         }
 
-        static void ConfigureRouting<T>(TransportExtensions<T> transport)
+        static void ConfigureRouting<T>(RoutingSettings<T> routing)
             where T : TransportDefinition
         {
-            var routing = transport.Routing();
             routing.RouteToEndpoint(typeof(PlaceOrder), "Sales.Api");
             routing.RouteToEndpoint(typeof(CancelOrder), "Sales.Api");
             routing.RouteToEndpoint(typeof(StoreOrder), "Sales.Api");

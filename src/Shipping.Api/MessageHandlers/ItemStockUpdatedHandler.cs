@@ -1,10 +1,10 @@
 ﻿namespace Shipping.Api.MessageHandlers
 {
-    using System.Linq;
-    using System.Threading.Tasks;
     using NServiceBus;
     using NServiceBus.Logging;
     using Shipping.Api.Data;
+    using System.Linq;
+    using System.Threading.Tasks;
     using Warehouse.Azure;
 
     public class ItemStockUpdatedHandler : IHandleMessages<ItemStockUpdated>
@@ -23,7 +23,8 @@
 
             var stockItem = dbContext.StockItems.First(x => x.ProductId == message.ProductId);
             stockItem.InStock = message.IsAvailable;
-            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+
+            await dbContext.SaveChangesAsync(context.CancellationToken);
         }
     }
 }
