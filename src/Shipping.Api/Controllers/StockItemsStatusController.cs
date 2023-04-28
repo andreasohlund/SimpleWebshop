@@ -7,6 +7,7 @@
     using Shipping.Api.Models;
 
     [Route("product")]
+    [ApiController]
     public class StockItemsStatusController : Controller
     {
         readonly StockItemDbContext context;

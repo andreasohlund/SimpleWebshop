@@ -1,28 +1,45 @@
 ﻿namespace Shipping.Api
 {
-    using System.IO;
+    using System;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.Extensions.Configuration;
+    using System.Threading.Tasks;
+    using Microsoft.Extensions.Hosting;
+    using NServiceBus;
+    using NServiceBus.MessageMutator;
+    using ITOps.Shared;
+    using Shipping.Api.Data;
 
-    public class Program
+    static class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            var basePath = Directory.GetCurrentDirectory();
+            StockItemDbContext.SeedDatabase();
 
-            var config = new ConfigurationBuilder()
-                .SetBasePath(basePath)
-                .Build();
+            using var host = CreateHostBuilder(args).Build();
+            await host.StartAsync();
 
-            var host = new WebHostBuilder()
-                .UseKestrel()
-                .UseUrls("http://localhost:50686")
-                .UseContentRoot(basePath)
-                .UseConfiguration(config)
-                .UseStartup<Startup>()
-                .Build();
+            Console.WriteLine("Press any key to shutdown");
+            Console.ReadKey();
+            await host.StopAsync();
+        }
 
-            host.Run();
+        static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args)
+                .UseNServiceBus(c =>
+                {
+                    var endpointConfiguration = new EndpointConfiguration("Shipping.Api");
+
+                    endpointConfiguration.ApplyCommonNServiceBusConfiguration();
+
+                    // Remove assembly information to be able to reuse message schema from different endpoints w/o sharing messages assembly
+                    endpointConfiguration.RegisterMessageMutator(new RemoveAssemblyInfoFromMessageMutator());
+
+                    // Configure saga audit plugin
+                    endpointConfiguration.AuditSagaStateChanges("Particular.ServiceControl");
+                    return endpointConfiguration;
+                })
+                .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
         }
     }
 }
