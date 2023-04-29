@@ -4,7 +4,6 @@
     using System.Linq;
     using System.Net.Http;
     using ITOps.ViewModelComposition;
-    using ITOps.ViewModelComposition.Json;
     using Marketing.Events.ViewModelComposition;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Routing;

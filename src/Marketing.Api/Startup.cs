@@ -1,67 +1,31 @@
 ﻿namespace Marketing.Api
 {
-    using System;
-    using Autofac;
-    using Autofac.Extensions.DependencyInjection;
-    using ITOps.Shared;
     using Marketing.Api.Data;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using NServiceBus;
+    using Microsoft.Extensions.Hosting;
 
     public class Startup
     {
-        IEndpointInstance endpoint;
-
-        public Startup(IConfiguration configuration)
+        public void ConfigureServices(IServiceCollection services)
         {
-            Configuration = configuration;
+            services.AddRouting();
+            services.AddCors(options => { options.AddPolicy("AllowAllOrigins", builder => { builder.AllowAnyOrigin(); }); });
+            services.AddControllers();
+            services.AddDbContext<ProductDetailsDbContext>();
         }
 
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public IServiceProvider ConfigureServices(IServiceCollection services)
-        {
-            services.AddDbContext<ProductDetailsDbContext>(opt => opt.UseInMemoryDatabase("ProductDetailsList"));
-            services.AddMvc();
-            var builder = new ContainerBuilder();
-            builder.Populate(services);
-
-            builder.Register(c => endpoint)
-                .As<IMessageSession>()
-                .SingleInstance();
-
-            var container = builder.Build();
-            endpoint = BootstrapNServiceBusForMessaging(container);
-
-            return new AutofacServiceProvider(container);
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime appLifetime)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMvc();
-
-            var context = app.ApplicationServices.GetService<ProductDetailsDbContext>();
-            DataInitializer.Initialize(context);
-
-            appLifetime.ApplicationStopping.Register(() => endpoint.Stop().GetAwaiter().GetResult());
-        }
-
-        IEndpointInstance BootstrapNServiceBusForMessaging(IContainer container)
-        {
-            var endpointConfiguration = new EndpointConfiguration("Marketing.Api");
-            endpointConfiguration.ApplyCommonNServiceBusConfiguration(container);
-            return Endpoint.Start(endpointConfiguration).GetAwaiter().GetResult();
+            app.UseRouting();
+            app.UseCors("AllowAllOrigins");
+            app.UseEndpoints(builder => builder.MapControllers());
         }
     }
 }

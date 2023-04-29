@@ -4,6 +4,7 @@
 
     public class ProductsController : Controller
     {
+        [HttpGet("/products")]
         public ActionResult Index()
         {
             return View();

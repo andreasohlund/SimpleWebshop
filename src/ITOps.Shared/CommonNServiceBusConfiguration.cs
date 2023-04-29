@@ -3,6 +3,7 @@
     using Marketing.Internal;
     using NServiceBus;
     using NServiceBus.Logging;
+    using NServiceBus.MessageMutator;
     using NServiceBus.Transport;
     using Sales.Internal;
     using System;
@@ -51,7 +52,13 @@
 
                 // Enable endpoint hearbeat reporting
                 endpointConfiguration.SendHeartbeatTo("Particular.ServiceControl", TimeSpan.FromSeconds(30));
+
+                // Configure saga audit plugin
+                endpointConfiguration.AuditSagaStateChanges("Particular.ServiceControl");
             }
+
+            // Remove assembly information to be able to reuse message schema from different endpoints w/o sharing messages assembly
+            endpointConfiguration.RegisterMessageMutator(new RemoveAssemblyInfoFromMessageMutator());
         }
 
         static void ConfigureRouting<T>(RoutingSettings<T> routing)

@@ -3,39 +3,37 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
     using System.Reflection;
-    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.FileProviders;
 
     public static class MvcBuilderExtensions
     {
-        public static IMvcBuilder AddViewModelCompositionMvcSupport(this IMvcBuilder builder,
-            string assemblySearchPattern = "*ViewModelComposition*.dll")
+        public static IMvcBuilder AddUIComposition(this IMvcBuilder builder, string assemblySearchPattern = "*ViewComponents*.dll")
         {
             var fileNames = Directory.GetFiles(AppContext.BaseDirectory, assemblySearchPattern);
 
-            var types = new List<Type>();
+            var assemblies = new List<(string BaseNamespace, Assembly Assembly)>();
+
             foreach (var fileName in fileNames)
             {
-                var temp = AssemblyLoader.Load(fileName)
-                    .GetTypes()
-                    .Where(t =>
-                    {
-                        var typeInfo = t.GetTypeInfo();
-                        return !typeInfo.IsInterface
-                               && !typeInfo.IsAbstract
-                               && typeof(IHandleResult).IsAssignableFrom(t);
-                    });
+                var assembly = Assembly.LoadFrom(fileName);
+                var attribute = assembly.GetCustomAttribute<UICompositionSupportAttribute>();
 
-                types.AddRange(temp);
+                if (attribute != null)
+                {
+                    assemblies.Add((attribute.BaseNamespace, assembly));
+                }
             }
 
-            foreach (var type in types) builder.Services.AddSingleton(typeof(IHandleResult), type);
-
-            builder.Services.Configure<MvcOptions>(options =>
+            assemblies.ForEach(a =>
             {
-                options.Filters.Add(typeof(CompositionActionFilter));
+                builder.Services.Configure<MvcRazorRuntimeCompilationOptions>(options =>
+                {
+                    options.FileProviders.Add(new EmbeddedFileProvider(a.Assembly, a.BaseNamespace));
+                });
+                builder.AddApplicationPart(a.Assembly);
             });
 
             return builder;

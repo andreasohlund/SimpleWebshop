@@ -3,7 +3,6 @@
     using System.Net.Http;
     using System.Threading.Tasks;
     using ITOps.ViewModelComposition;
-    using ITOps.ViewModelComposition.Json;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Routing;
 
