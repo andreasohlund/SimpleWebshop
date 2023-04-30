@@ -29,7 +29,7 @@
 
                 foreach (dynamic productPrice in productPrices)
                 {
-                    @event.AvailableProductsViewModel[(int)productPrice.Id].Price = productPrice.Price;
+                    @event.AvailableProductsViewModel[productPrice.Id].Price = productPrice.Price;
                 }
             });
         }
