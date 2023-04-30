@@ -53,7 +53,6 @@
                 productDetailObject.ImageUrl = product.ImageUrl;
                 
                 //TODO:
-                productDetailObject.Price = 100.0;
                 productDetailObject.InStock = true;
                 dictionary[product.ProductId] = productDetailObject;
             }

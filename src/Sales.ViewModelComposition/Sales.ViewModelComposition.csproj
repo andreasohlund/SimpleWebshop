@@ -1,8 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="BuyItemPostHandler.cs" />
+    <Compile Remove="CancelOrderPostHandler.cs" />
+    <Compile Remove="OrderListGetHandler.cs" />
+    <Compile Remove="ProductPriceGetHandler.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ITOps.ViewModelComposition\ITOps.ViewModelComposition.csproj" />

@@ -1,27 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="NServiceBus" Version="8.0.3" />
-    <PackageReference Include="NServiceBus.Newtonsoft.Json" Version="3.0.0" />
-    <PackageReference Include="NServiceBus.SagaAudit" Version="4.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\ITOps.Shared\ITOps.Shared.csproj" />
-    <ProjectReference Include="..\Sales.Events\Sales.Events.csproj" />
-    <ProjectReference Include="..\Sales.Internal\Sales.Internal.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\ITOps.Shared\ITOps.Shared.csproj" />
+		<ProjectReference Include="..\Sales.Events\Sales.Events.csproj" />
+		<ProjectReference Include="..\Sales.Internal\Sales.Internal.csproj" />
+	</ItemGroup>
 
 </Project>
