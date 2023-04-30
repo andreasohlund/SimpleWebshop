@@ -16,13 +16,13 @@
                         <div class="card text-center">
                             <div class="card-body text-center">
                                 <p>
-                                    <img class=" img-fluid" src="@product.imageUrl" width="120" height="140" alt="card image">
+                                    <img class=" img-fluid" src="@product.ImageUrl" width="120" height="140" alt="card image">
                                 </p>
                             </div>
-                            <h4 class="card-title">@product.name</h4>
-                            <h5>$@product.price.ToString("f2")</h5>
+                            <h4 class="card-title">@product.Name</h4>
+                            <h5>$@product.Price.ToString("f2")</h5>
                             <div class="card-footer">
-                                @if (product.inStock)
+                                @if (product.InStock)
                                 {
                                     <p class="badge-pill badge-info">In Stock</p>
                                 }
@@ -30,7 +30,7 @@
                                 {
                                     <p class="badge-pill badge-danger">Out of Stock</p>
                                 }
-                                <a href="/products/details/@product.productId" class="btn btn-primary">Details</a>
+                                <a href="/products/details/@product.ProductId" class="btn btn-primary">Details</a>
                             </div>
                         </div>
                     }

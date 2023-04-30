@@ -23,11 +23,12 @@
         [HttpGet("/products")]
         public async Task Handle(HttpRequest request)
         {
-            var url = $"/api/available/products";
+            //TODO: hide this
+            var url = "http://localhost:50688/product";
             var response = await httpClient.GetAsync(url);
 
-            var availableProducts = await response.Content.As<int[]>();
-            var availableProductsViewModel = MapToDictionary(availableProducts);
+            var availableProducts = await response.Content.AsExpandoArray();
+            var availableProductsViewModel = MapToViewModelDictionary(availableProducts);
 
             var context = request.GetCompositionContext();
             var vm = request.GetComposedResponseModel();
@@ -36,53 +37,27 @@
                 AvailableProductsViewModel = availableProductsViewModel
             });
 
-            vm.AvailableProducts = availableProductsViewModel.Values.ToList();
-            ////invoke Marketing back-end API to retrieve the current products
-            //var url = $"http://localhost:50688/product/";
-            //var client = new HttpClient();
-            //var response = await client.GetAsync(url);
-            //dynamic products = await response.Content.AsExpandoArrayAsync();
-
-            //// Create a dictionary that's keyed by OrderId. 
-            //var orderDictionary = MapToViewModelDictionary(products);
-
-            //// Raise an event so that other views that need t
-            //// enrich the view with more data related to each OrderId .  
-            //await vm.RaiseEventAsync(new ProductsLoaded {OrdersDictionary = orderDictionary});
-
-            //// Store the enriched data in the viewmodel.
-            //vm.Products = orderDictionary.Values;
+            vm.Products = availableProductsViewModel.Values.ToList();
         }
 
-        IDictionary<int, dynamic> MapToDictionary(IEnumerable<int> availableProducts)
+        IDictionary<dynamic, dynamic> MapToViewModelDictionary(dynamic[] products)
         {
-            var availableProductsViewModel = new Dictionary<int, dynamic>();
+            var dictionary = new Dictionary<dynamic, dynamic>();
 
-            foreach (var id in availableProducts)
+            //TODO: sync with mauro
+            foreach (var product in products)
             {
-                dynamic vm = new ExpandoObject();
-                vm.Id = id;
-
-                availableProductsViewModel[id] = vm;
+                dynamic productDetailObject = new ExpandoObject();
+                productDetailObject.ProductId = product.ProductId;
+                productDetailObject.Name = product.Name;
+                productDetailObject.ImageUrl = product.ImageUrl;
+                
+                //TODO:
+                productDetailObject.Price = 100.0;
+                productDetailObject.InStock = true;
+                dictionary[product.ProductId] = productDetailObject;
             }
-
-            return availableProductsViewModel;
+            return dictionary;
         }
-
-        //IDictionary<dynamic, dynamic> MapToViewModelDictionary(dynamic[] products)
-        //{
-        //    var dictionary = new Dictionary<dynamic, dynamic>();
-
-        //    foreach (var product in products)
-        //    {
-        //        dynamic productDetailObject = new ExpandoObject();
-        //        productDetailObject.productId = product.productId;
-        //        productDetailObject.name = product.name;
-        //        productDetailObject.imageUrl = product.imageUrl;
-        //        dictionary[product.productId] = productDetailObject;
-        //    }
-
-        //    return dictionary;
-        //}
     }
 }

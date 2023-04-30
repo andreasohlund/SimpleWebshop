@@ -40,6 +40,7 @@
                 ImageUrl = "https://images-na.ssl-images-amazon.com/images/I/81zc0eOl8RL._SY445_.jpg"
             });
 
+            context.SaveChanges();
         }
     }
 }

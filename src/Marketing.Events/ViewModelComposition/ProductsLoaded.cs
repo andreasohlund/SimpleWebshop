@@ -4,6 +4,6 @@
 
     public class ProductsLoaded
     {
-        public IDictionary<int, dynamic> AvailableProductsViewModel { get; set; }
+        public IDictionary<dynamic, dynamic> AvailableProductsViewModel { get; set; }
     }
-}
+}   

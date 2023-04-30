@@ -3,10 +3,11 @@
     "EShop.UI": {
       "commandName": "Project",
       "launchBrowser": true,
+      "launchUrl": "http://localhost:56039/products",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:56039/"
+      "applicationUrl": "http://localhost:56039"
     }
   }
 }
