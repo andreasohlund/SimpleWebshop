@@ -1,7 +1,5 @@
 ﻿namespace Sales.Api
 {
-    using System;
-    using System.Threading.Tasks;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Hosting;
     using NServiceBus;
