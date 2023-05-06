@@ -5,11 +5,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="BuyItemPostHandler.cs" />
-	  <Compile Remove="OrdersListGetHandler.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\ITOps.ViewModelComposition\ITOps.ViewModelComposition.csproj" />
 		<ProjectReference Include="..\Marketing.Events\Marketing.Events.csproj" />
 		<ProjectReference Include="..\Marketing.Internal\Marketing.Internal.csproj" />

@@ -27,21 +27,21 @@
                     <tbody>
                     @foreach (var order in Model.Orders)
                     {
-                        <form action="/orders/cancelorder/@order.orderId" method="post">
+                        <form action="/orders/cancelorder/@order.OrderId" method="post">
                             <tr>
                                 <td style="height: 100px; width: 70px;">
-                                    <img src="@order.imageUrl" style="max-height: 100%; max-width: 100%"/>
+                                    <img src="@order.ImageUrl" style="max-height: 100%; max-width: 100%"/>
                                 </td>
-                                <td>@order.name</td>
-                                <td>@order.orderId</td>
-                                <td>@order.orderPlacedOn</td>
-                                <td class="text-right">$@order.price</td>
+                                <td>@order.Name</td>
+                                <td>@order.OrderId</td>
+                                <td>@order.OrderPlacedOn</td>
+                                <td class="text-right">$@order.Price</td>
                                 <td class="text-right">
-                                    @if (!order.isOrderAccepted && !order.isOrderCancelled)
+                                    @if (!order.IsOrderAccepted && !order.IsOrderCancelled)
                                     {
                                         <input type="submit" class="btn btn-danger" value="Cancel Order"/>
                                     }
-                                    @if (order.isOrderCancelled)
+                                    @if (order.IsOrderCancelled)
                                     {
                                         <span class="label label-danger">Cancelled</span>
                                     }

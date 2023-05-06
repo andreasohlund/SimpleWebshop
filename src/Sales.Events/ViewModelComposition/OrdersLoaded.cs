@@ -4,6 +4,6 @@
 
     public class OrdersLoaded
     {
-        public IDictionary<dynamic, dynamic> OrdersDictionary { get; set; }
+        public IDictionary<dynamic, dynamic> OrdersViewModel { get; set; }
     }
 }

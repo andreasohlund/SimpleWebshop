@@ -9,7 +9,6 @@ using ServiceComposer.AspNetCore;
 
 public class BuyItemPostHandler : ICompositionRequestsHandler
 {
-    static int orderIdCounter;
     readonly IMessageSession session;
 
     public BuyItemPostHandler(IMessageSession messageSession)

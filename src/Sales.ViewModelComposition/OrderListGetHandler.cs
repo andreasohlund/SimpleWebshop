@@ -1,11 +1,11 @@
-﻿using EShop.Messages.ViewModelCompositionEvents;
+﻿namespace Sales.ViewModelComposition;
+
 using ITOps.ViewModelComposition;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Sales.Events.ViewModelComposition;
 using ServiceComposer.AspNetCore;
 using System.Dynamic;
-
-namespace Sales.ViewModelComposition;
 
 class OrderListGetHandler : ICompositionRequestsHandler
 {

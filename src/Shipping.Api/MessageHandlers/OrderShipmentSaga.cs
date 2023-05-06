@@ -1,50 +1,54 @@
-﻿namespace Shipping.Api.MessageHandlers
+﻿namespace Shipping.Api.MessageHandlers;
+
+using Billing.Events;
+using NServiceBus;
+using NServiceBus.Logging;
+using Sales.Events;
+
+public class OrderShipmentSaga : Saga<OrderShipmentSaga.SagaData>,
+    IAmStartedByMessages<OrderBilled>,
+    IAmStartedByMessages<OrderAccepted>
 {
-    using System.Threading.Tasks;
-    using Billing.Events;
-    using NServiceBus;
-    using NServiceBus.Logging;
-    using Sales.Events;
+    static readonly ILog log = LogManager.GetLogger<OrderShipmentSaga>();
 
-    public class OrderShipmentSaga : Saga<OrderShipmentSagaData>,
-        IAmStartedByMessages<OrderBilled>,
-        IAmStartedByMessages<OrderAccepted>
+    public Task Handle(OrderAccepted message, IMessageHandlerContext context)
     {
-        static readonly ILog log = LogManager.GetLogger<OrderShipmentSaga>();
+        log.Info($"Order '{message.OrderId}' has been accepted. Prepare inventory ready for shipping");
+        Data.IsOrderAccepted = true;
+        CompleteSagaIfBothEventsReceived();
+        return Task.CompletedTask;
+    }
 
-        public Task Handle(OrderAccepted message, IMessageHandlerContext context)
+    public Task Handle(OrderBilled message, IMessageHandlerContext context)
+    {
+        log.Info($"Order '{message.OrderId}' has been billed.");
+        Data.IsOrderBilled = true;
+        CompleteSagaIfBothEventsReceived();
+        return Task.CompletedTask;
+    }
+
+    protected override void ConfigureHowToFindSaga(SagaPropertyMapper<OrderShipmentSaga.SagaData> mapper)
+    {
+        mapper.MapSaga(saga => saga.OrderId)
+            .ToMessage<OrderBilled>(message => message.OrderId)
+            .ToMessage<OrderAccepted>(message => message.OrderId);
+    }
+
+    public void CompleteSagaIfBothEventsReceived()
+    {
+        if (Data.IsOrderBilled && Data.IsOrderAccepted)
         {
-            log.Info($"Order '{message.OrderId}' has been accepted. Prepare inventory ready for shipping");
-            Data.IsOrderAccepted = true;
-            CompleteSagaIfBothEventsReceived();
-            return Task.CompletedTask;
+            log.Info(
+                $"Order '{Data.OrderId}' is ready to ship as both OrderAccepted and OrderBilled events has been received.");
+            MarkAsComplete();
         }
+    }
 
-        public Task Handle(OrderBilled message, IMessageHandlerContext context)
-        {
-            log.Info($"Order '{message.OrderId}' has been billed.");
-            Data.IsOrderBilled = true;
-            CompleteSagaIfBothEventsReceived();
-            return Task.CompletedTask;
-        }
 
-        protected override void ConfigureHowToFindSaga(SagaPropertyMapper<OrderShipmentSagaData> mapper)
-        {
-            mapper.ConfigureMapping<OrderBilled>(message => message.OrderId)
-                .ToSaga(sagaData => sagaData.OrderId);
-
-            mapper.ConfigureMapping<OrderAccepted>(message => message.OrderId)
-                .ToSaga(sagaData => sagaData.OrderId);
-        }
-
-        public void CompleteSagaIfBothEventsReceived()
-        {
-            if (Data.IsOrderBilled && Data.IsOrderAccepted)
-            {
-                log.Info(
-                    $"Order '{Data.OrderId}' is ready to ship as both OrderAccepted and OrderBilled events has been received.");
-                MarkAsComplete();
-            }
-        }
+    public class SagaData : ContainSagaData
+    {
+        public string OrderId { get; set; }
+        public bool IsOrderAccepted { get; set; }
+        public bool IsOrderBilled { get; set; }
     }
 }

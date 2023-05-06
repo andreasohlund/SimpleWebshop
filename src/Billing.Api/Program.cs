@@ -1,28 +1,33 @@
-﻿namespace Billing.Api
+﻿namespace Billing.Api;
+
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
+using NServiceBus;
+using ITOps.Shared;
+
+static class Program
 {
-    using System.IO;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.Extensions.Configuration;
-
-    public class Program
+    public static async Task Main(string[] args)
     {
-        public static void Main(string[] args)
-        {
-            var basePath = Directory.GetCurrentDirectory();
+        using var host = CreateHostBuilder(args).Build();
+        await host.StartAsync();
 
-            var config = new ConfigurationBuilder()
-                .SetBasePath(basePath)
-                .Build();
+        Console.WriteLine("Press any key to shutdown");
+        Console.ReadKey();
+        await host.StopAsync();
+    }
 
-            var host = new WebHostBuilder()
-                .UseKestrel()
-                .UseUrls("http://localhost:63874")
-                .UseContentRoot(basePath)
-                .UseConfiguration(config)
-                .UseStartup<Startup>()
-                .Build();
+    static IHostBuilder CreateHostBuilder(string[] args)
+    {
+        return Host.CreateDefaultBuilder(args)
+            .UseNServiceBus(c =>
+            {
+                var endpointConfiguration = new EndpointConfiguration("Billing.Api"); ;
 
-            host.Run();
-        }
+                endpointConfiguration.ApplyCommonNServiceBusConfiguration();
+
+                return endpointConfiguration;
+            })
+            .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
     }
 }

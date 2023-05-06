@@ -1,49 +1,26 @@
-﻿namespace Billing.Api
+﻿namespace Billing.Api;
+
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+public class Startup
 {
-    using ITOps.Shared;
-    using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
-    using NServiceBus;
-
-    public class Startup
+    public void ConfigureServices(IServiceCollection services)
     {
-        IEndpointInstance endpoint;
+        services.AddRouting();
+        services.AddControllers();
+    }
 
-        public Startup(IConfiguration configuration)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
         {
-            Configuration = configuration;
+            app.UseDeveloperExceptionPage();
         }
 
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddMvc();
-            BootstrapNServiceBusForMessaging(services);
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime appLifetime)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseMvc();
-
-            appLifetime.ApplicationStopping.Register(() => endpoint.Stop().GetAwaiter().GetResult());
-        }
-
-        void BootstrapNServiceBusForMessaging(IServiceCollection services)
-        {
-            var endpointConfiguration = new EndpointConfiguration("Billing.Api");
-            endpointConfiguration.ApplyCommonNServiceBusConfiguration();
-            endpoint = Endpoint.Start(endpointConfiguration).GetAwaiter().GetResult();
-            services.AddSingleton<IMessageSession>(endpoint);
-        }
+        app.UseRouting();
+        app.UseEndpoints(builder => builder.MapControllers());
     }
 }
