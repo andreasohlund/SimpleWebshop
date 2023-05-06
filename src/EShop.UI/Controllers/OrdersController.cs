@@ -1,18 +1,19 @@
-﻿namespace EShop.UI.Controllers
+﻿namespace EShop.UI.Controllers;
+
+using Microsoft.AspNetCore.Mvc;
+
+[Route("orders")]
+
+public class OrdersController : Controller
 {
-    using Microsoft.AspNetCore.Mvc;
-
-    public class OrdersController : Controller
+    public IActionResult Index()
     {
-        // GET: /<controller>/
-        public IActionResult Index()
-        {
-            return View();
-        }
+        return View();
+    }
 
-        public IActionResult CancelOrder(int id)
-        {
-            return View();
-        }
+    [HttpGet("cancel/{id}")]
+    public IActionResult CancelOrder(int id)
+    {
+        return View();
     }
 }
