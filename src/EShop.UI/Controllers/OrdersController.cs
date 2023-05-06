@@ -11,8 +11,8 @@ public class OrdersController : Controller
         return View();
     }
 
-    [HttpGet("cancel/{id}")]
-    public IActionResult CancelOrder(int id)
+    [HttpPost("cancelorder/{id}")]
+    public IActionResult CancelOrder(string id)
     {
         return View();
     }

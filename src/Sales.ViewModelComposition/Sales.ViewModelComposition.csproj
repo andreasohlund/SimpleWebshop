@@ -5,10 +5,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Remove="CancelOrderPostHandler.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\ITOps.ViewModelComposition\ITOps.ViewModelComposition.csproj" />
 		<ProjectReference Include="..\Marketing.Events\Marketing.Events.csproj" />
 		<ProjectReference Include="..\Sales.Events\Sales.Events.csproj" />

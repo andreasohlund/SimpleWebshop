@@ -1,42 +1,29 @@
-﻿namespace Sales.ViewModelComposition
+﻿namespace Sales.ViewModelComposition;
+
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
+using NServiceBus;
+using Sales.Internal;
+using ServiceComposer.AspNetCore;
+
+public class CancelOrderPostHandler : ICompositionRequestsHandler
 {
-    using System.Threading.Tasks;
-    using ITOps.ViewModelComposition;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Routing;
-    using NServiceBus;
-    using Sales.Internal;
+    readonly IMessageSession session;
 
-    public class CancelOrderPostHandler : IHandleRequests
+    public CancelOrderPostHandler(IMessageSession messageSession)
     {
-        readonly IMessageSession session;
+        session = messageSession;
+    }
 
-        public CancelOrderPostHandler(IMessageSession messageSession)
+    [HttpPost("/orders/cancelorder/{id}")]
+    public async Task Handle(HttpRequest request)
+    {
+        var orderId = (string)request.HttpContext.GetRouteData().Values["id"];
+
+        await session.Send(new CancelOrder
         {
-            session = messageSession;
-        }
-
-        public bool Matches(RouteData routeData, string httpVerb, HttpRequest request)
-        {
-            //determine if the incoming request should 
-            //be composed with Marketing data, e.g.
-            var controller = (string) routeData.Values["controller"];
-            var action = (string) routeData.Values["action"];
-
-            return HttpMethods.IsPost(httpVerb)
-                   && controller.ToLowerInvariant() == "orders"
-                   && action.ToLowerInvariant() == "cancelorder"
-                   && routeData.Values.ContainsKey("id");
-        }
-
-        public async Task Handle(dynamic vm, RouteData routeData, HttpRequest request)
-        {
-            var orderId = (string) routeData.Values["id"];
-
-            await session.Send(new CancelOrder
-            {
-                OrderId = orderId
-            });
-        }
+            OrderId = orderId
+        });
     }
 }
