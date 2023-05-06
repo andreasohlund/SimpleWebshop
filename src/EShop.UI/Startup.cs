@@ -18,6 +18,7 @@ public class Startup
         services.AddViewModelComposition(options =>
         {
             options.EnableCompositionOverControllers();
+            options.EnableWriteSupport();
         });
     }
 

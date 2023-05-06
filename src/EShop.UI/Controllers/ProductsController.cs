@@ -16,8 +16,9 @@ public class ProductsController : Controller
         return View();
     }
 
-    //public IActionResult BuyItem(int id)
-    //{
-    //    return View();
-    //}
+    [HttpPost("buyitem/{id}")]
+    public IActionResult BuyItem(int id)
+    {
+        return View();
+    }
 }
