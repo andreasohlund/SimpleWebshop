@@ -1,17 +1,13 @@
 ﻿namespace Marketing.ViewModelComposition;
 
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Marketing.Events.ViewModelComposition;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceComposer.AspNetCore;
 using ITOps.ViewModelComposition;
+using System.Dynamic;
 
-internal class ProductsListGetHandler : ICompositionRequestsHandler
+class ProductsListGetHandler : ICompositionRequestsHandler
 {
     readonly HttpClient httpClient;
 
@@ -23,7 +19,6 @@ internal class ProductsListGetHandler : ICompositionRequestsHandler
     [HttpGet("/products")]
     public async Task Handle(HttpRequest request)
     {
-        //TODO: hide this
         var url = "http://localhost:50688/product";
         var response = await httpClient.GetAsync(url);
 
