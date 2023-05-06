@@ -1,36 +1,33 @@
-﻿namespace Billing.Api.MessageHandlers
+﻿namespace Billing.Api.MessageHandlers;
+
+using Billing.Events;
+using NServiceBus;
+using NServiceBus.Logging;
+using Sales.Events;
+
+public class OrderAcceptedHandler : IHandleMessages<OrderAccepted>
 {
-    using System;
-    using System.Threading.Tasks;
-    using Billing.Events;
-    using NServiceBus;
-    using NServiceBus.Logging;
-    using Sales.Events;
+    static readonly ILog log = LogManager.GetLogger<OrderAcceptedHandler>();
+    static readonly Random random = new Random();
 
-    public class OrderAcceptedHandler : IHandleMessages<OrderAccepted>
+    public async Task Handle(OrderAccepted message, IMessageHandlerContext context)
     {
-        static readonly ILog log = LogManager.GetLogger<OrderAcceptedHandler>();
-        static readonly Random random = new Random();
+        // Simulate some work
+        await Task.Delay(random.Next(25, 50), context.CancellationToken);
 
-        public async Task Handle(OrderAccepted message, IMessageHandlerContext context)
+        log.Info($"Order '{message.OrderId}' has been accepted, make sure the payment goes through.");
+
+        await ThisIsntGoingToScaleWell();
+
+        await context.Publish(new OrderBilled
         {
-            // Simulate some work
-            await Task.Delay(random.Next(25, 50));
+            OrderId = message.OrderId,
+            ProductId = message.ProductId
+        });
+    }
 
-            log.Info($"Order '{message.OrderId}' has been accepted, make sure the payment goes through.");
-
-            await ThisIsntGoingToScaleWell();
-
-            await context.Publish(new OrderBilled
-            {
-                OrderId = message.OrderId,
-                ProductId = message.ProductId
-            });
-        }
-
-        Task ThisIsntGoingToScaleWell()
-        {
-            return Task.Delay(random.Next(250, 350));
-        }
+    Task ThisIsntGoingToScaleWell()
+    {
+        return Task.Delay(random.Next(250, 350));
     }
 }
