@@ -1,35 +1,32 @@
-﻿namespace Sales.ViewModelComposition
+﻿namespace Sales.ViewModelComposition;
+
+using ITOps.ViewModelComposition;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
+using ServiceComposer.AspNetCore;
+
+public class ProductPriceGetHandler : ICompositionRequestsHandler
 {
-    using System.Net.Http;
-    using System.Threading.Tasks;
-    using ITOps.ViewModelComposition;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Routing;
+    readonly HttpClient httpClient;
 
-    public class ProductPriceGetHandler : IHandleRequests
+    public ProductPriceGetHandler(HttpClient httpClient)
     {
-        public bool Matches(RouteData routeData, string httpVerb, HttpRequest request)
-        {
-            var controller = (string) routeData.Values["controller"];
-            var action = (string) routeData.Values["action"];
+        this.httpClient = httpClient;
+    }
 
-            return HttpMethods.IsGet(httpVerb)
-                   && controller.ToLowerInvariant() == "products"
-                   && action.ToLowerInvariant() == "details"
-                   && routeData.Values.ContainsKey("id");
-        }
+    [HttpGet("/products/details/{id}")]
+    public async Task Handle(HttpRequest request)
+    {
+        var id = request.HttpContext.GetRouteData().Values["id"];
 
-        public async Task Handle(dynamic vm, RouteData routeData, HttpRequest request)
-        {
-            //invoke Sales back-end API to retrieve sales related product details
-            var id = (string) routeData.Values["id"];
+        var url = $"http://localhost:50687/product/{id}";
+        var response = await httpClient.GetAsync(url);
 
-            var url = $"http://localhost:50687/product/{id}";
-            var client = new HttpClient();
-            var response = await client.GetAsync(url);
+        dynamic productDetails = await response.Content.AsExpando();
 
-            dynamic productPrice = await response.Content.AsExpandoAsync();
-            vm.Price = productPrice.price;
-        }
+        var vm = request.GetComposedResponseModel();
+
+        vm.Price = productDetails.Price;
     }
 }

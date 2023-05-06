@@ -8,7 +8,6 @@
     <Compile Remove="BuyItemPostHandler.cs" />
     <Compile Remove="CancelOrderPostHandler.cs" />
     <Compile Remove="OrderListGetHandler.cs" />
-    <Compile Remove="ProductPriceGetHandler.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,25 +1,32 @@
-﻿namespace Shipping.ViewModelComposition
+﻿namespace Shipping.ViewModelComposition;
+
+using ITOps.ViewModelComposition;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
+using ServiceComposer.AspNetCore;
+
+public class StockItemStatusGetHandler : ICompositionRequestsHandler
 {
-    using System.Net.Http;
-    using System.Threading.Tasks;
-    using ITOps.ViewModelComposition;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Routing;
+    readonly HttpClient httpClient;
 
-    public class StockItemStatusGetHandler : IHandleRequests
+    public StockItemStatusGetHandler(HttpClient httpClient)
     {
-        public async Task Handle(dynamic vm, RouteData routeData, HttpRequest request)
-        {
-            //invoke Warehouse back-end API to retrieve inventory related details
-            var id = (string) routeData.Values["id"];
+        this.httpClient = httpClient;
+    }
 
-            var url = $"http://localhost:50686/product/{id}";
-            var client = new HttpClient();
-            var response = await client.GetAsync(url);
+    [HttpGet("/products/details/{id}")]
+    public async Task Handle(HttpRequest request)
+    {
+        var id = request.HttpContext.GetRouteData().Values["id"];
 
-            dynamic stockStatus = await response.Content.AsExpandoAsync();
-            vm.InStock = stockStatus.inStock;
-        }
+        var url = $"http://localhost:50686/product/{id}";
+        var response = await httpClient.GetAsync(url);
+
+        dynamic productDetails = await response.Content.AsExpando();
+
+        var vm = request.GetComposedResponseModel();
+
+        vm.InStock = productDetails.InStock;
     }
 }

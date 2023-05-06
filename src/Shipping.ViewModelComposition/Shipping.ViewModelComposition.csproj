@@ -1,16 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="StockItemStatusGetHandler.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\ITOps.ViewModelComposition\ITOps.ViewModelComposition.csproj" />
-    <ProjectReference Include="..\Marketing.Events\Marketing.Events.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\ITOps.ViewModelComposition\ITOps.ViewModelComposition.csproj" />
+		<ProjectReference Include="..\Marketing.Events\Marketing.Events.csproj" />
+	</ItemGroup>
 
 </Project>

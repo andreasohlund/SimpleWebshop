@@ -19,26 +19,27 @@
             context.ProductDetails.Add(new ProductDetails
             {
                 ProductId = 1,
-                Name = "Apple iPhone X",
-                Description = "5.8-inch display, Space Gray, 256GB",
-                ImageUrl = "https://www.t-mobile.com/content/dam/t-mobile/en-p/cell-phones/apple/apple-iphone-x/silver/Apple-iPhoneX-Silver-1-3x.jpg"
+                Name = "Apple iPhone 14 512GB Starlight",
+                Description = "Diagonal Size\r\n6.1 \"\r\nInternal Memory Capacity\r\n512 GB\r\nMobile Broadband Generation\r\n5G\r\nWaterprotected/Shockproof\r\nWaterprotected\r\nIP Class\r\nIP68\r\nColour\r\nStarlight",
+                ImageUrl = "https://cf-images.dustin.eu/cdn-cgi/image/format=auto,quality=75,width=640,,fit=contain/image/d200001268522/apple-iphone-14-128gb-stj%C3%A4rnglans.jpg"
             });
 
             context.ProductDetails.Add(new ProductDetails
             {
                 ProductId = 2,
-                Name = "Google Pixel 2 XL",
-                Description = "6-inch display, Unlocked, Just Black, 128GB",
-                ImageUrl = "https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6099/6099989_sd.jpg"
+                Name = "Galaxy Z Fold4 5G Enterprise Edition \r\n256GB Dual-SIM Black",
+                Description = "Diagonal Size\r\n7.6 \"\r\nInternal Memory Capacity\r\n256 GB\r\nMobile Broadband Generation\r\n5G\r\nSIM Card Slot Qty\r\nDual-SIM\r\nWaterprotected/Shockproof\r\nWaterprotected\r\nColour\r\nBlack",
+                ImageUrl = "https://cf-images.dustin.eu/cdn-cgi/image/format=auto,quality=75,width=640,,fit=contain/image/d200001001788376/samsung-galaxy-z-fold4-5g-enterprise-edition-256gb-dual-sim-black.png"
             });
 
             context.ProductDetails.Add(new ProductDetails
             {
                 ProductId = 3,
-                Name = "Galaxy Note 8",
-                Description = "6.3-inch Infinity Display, Midnight Black, 64GB",
-                ImageUrl = "https://images-na.ssl-images-amazon.com/images/I/81zc0eOl8RL._SY445_.jpg"
+                Name = "NOKIA MOBIRA CITYMAN 200",
+                Description = "Brick Mobile Cell Phone Vintage Retro Collectable",
+                ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/4/4e/Mobira_Cityman_200.jpg?20080801232340"
             });
+
 
             context.SaveChanges();
         }
