@@ -26,15 +26,16 @@
                 IsOrderAccepted = false,
                 OrderId = message.OrderId,
                 Price = GetPriceFor(message.ProductId)
-            }).ConfigureAwait(false);
-            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+            }, context.CancellationToken);
+
+            await dbContext.SaveChangesAsync(context.CancellationToken);
 
             // Publish event
             await context.Publish(new OrderPlaced
             {
                 OrderId = message.OrderId,
                 ProductId = message.ProductId
-            }).ConfigureAwait(false);
+            });
         }
 
         decimal GetPriceFor(int productId)

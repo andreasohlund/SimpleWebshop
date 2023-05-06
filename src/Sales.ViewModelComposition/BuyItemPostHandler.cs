@@ -22,8 +22,7 @@ public class BuyItemPostHandler : ICompositionRequestsHandler
     {
         var productId = (string)request.HttpContext.GetRouteData().Values["id"];
 
-        //TODO: Guid?
-        var orderId = Interlocked.Increment(ref orderIdCounter);
+        var orderId = Guid.NewGuid().ToString();
 
         await session.Send(new PlaceOrder
         {
