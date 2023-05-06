@@ -7,17 +7,18 @@ using Warehouse.Azure;
 
 public class ItemStockUpdatedHandler : IHandleMessages<ItemStockUpdated>
 {
-    static readonly ILog log = LogManager.GetLogger<ItemStockUpdated>();
+    readonly ILogger logger;
     readonly StockItemDbContext dbContext;
 
-    public ItemStockUpdatedHandler(StockItemDbContext dbContext)
+    public ItemStockUpdatedHandler(ILogger<ItemStockUpdatedHandler> logger, StockItemDbContext dbContext)
     {
+        this.logger = logger;
         this.dbContext = dbContext;
     }
 
     public async Task Handle(ItemStockUpdated message, IMessageHandlerContext context)
     {
-        log.Info($"Product Id: '{message.ProductId}', Availability: {message.IsAvailable}");
+        logger.LogInformation($"Product Id: '{message.ProductId}', Availability: {message.IsAvailable}");
 
         var stockItem = dbContext.StockItems.First(x => x.ProductId == message.ProductId);
         stockItem.InStock = message.IsAvailable;

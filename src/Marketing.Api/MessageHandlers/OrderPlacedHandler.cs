@@ -8,17 +8,18 @@ using Sales.Events;
 
 public class OrderPlacedHandler : IHandleMessages<OrderPlaced>
 {
-    static readonly ILog log = LogManager.GetLogger<OrderPlacedHandler>();
     readonly ProductDetailsDbContext dbContext;
+    readonly ILogger logger;
 
-    public OrderPlacedHandler(ProductDetailsDbContext dbContext)
+    public OrderPlacedHandler(ILogger<OrderPlacedHandler> logger, ProductDetailsDbContext dbContext)
     {
         this.dbContext = dbContext;
+        this.logger = logger;
     }
 
     public async Task Handle(OrderPlaced message, IMessageHandlerContext context)
     {
-        log.Info("Storing what products just got recently bought.");
+        logger.LogInformation("Storing what products just got recently bought.");
 
         await dbContext.OrderDetails.AddAsync(new OrderDetails
         {

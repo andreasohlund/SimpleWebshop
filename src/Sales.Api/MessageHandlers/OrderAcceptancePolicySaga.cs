@@ -1,7 +1,6 @@
 ﻿namespace Sales.Api.MessageHandlers;
 
 using NServiceBus;
-using NServiceBus.Logging;
 using Sales.Events;
 using Sales.Internal;
 
@@ -10,12 +9,16 @@ public class OrderAcceptancePolicySaga : Saga<OrderAcceptancePolicySaga.SagaData
     IAmStartedByMessages<CancelOrder>,
     IHandleTimeouts<BuyersRemorseIsOver>
 {
-    //TODO: ILogger
-    static readonly ILog log = LogManager.GetLogger<OrderAcceptancePolicySaga>();
+    readonly ILogger logger;
+
+    public OrderAcceptancePolicySaga(ILogger<OrderAcceptancePolicySaga> logger)
+    {
+        this.logger = logger;
+    }
 
     public Task Handle(CancelOrder message, IMessageHandlerContext context)
     {
-        log.Info($"Received the CancelOrder command for {message.OrderId}. Cancelling the order.");
+        logger.LogInformation($"Received the CancelOrder command for {message.OrderId}. Cancelling the order.");
         MarkAsComplete();
         var orderCancelled = new OrderCancelled
         {
@@ -26,7 +29,7 @@ public class OrderAcceptancePolicySaga : Saga<OrderAcceptancePolicySaga.SagaData
 
     public async Task Handle(PlaceOrder message, IMessageHandlerContext context)
     {
-        log.Info(
+        logger.LogInformation(
             $"Received the PlaceOrder command for {message.OrderId}. Wait for the grace period to see if the user cancels order.");
         Data.ProductId = message.ProductId;
         Data.OrderId = message.OrderId;
@@ -43,7 +46,7 @@ public class OrderAcceptancePolicySaga : Saga<OrderAcceptancePolicySaga.SagaData
 
     public Task Timeout(BuyersRemorseIsOver state, IMessageHandlerContext context)
     {
-        log.Info("Grace time to cancel order has elapsed. Order is being placed for fulfillment.-");
+        logger.LogInformation("Grace time to cancel order has elapsed. Order is being placed for fulfillment.-");
         MarkAsComplete();
         return context.Send(new AcceptOrder
         {

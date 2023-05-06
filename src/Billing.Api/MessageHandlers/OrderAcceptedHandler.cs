@@ -7,15 +7,17 @@ using Sales.Events;
 
 public class OrderAcceptedHandler : IHandleMessages<OrderAccepted>
 {
-    static readonly ILog log = LogManager.GetLogger<OrderAcceptedHandler>();
-    static readonly Random random = new Random();
+    public OrderAcceptedHandler(ILogger<OrderAcceptedHandler> logger)
+    {
+        this.logger = logger;
+    }
 
     public async Task Handle(OrderAccepted message, IMessageHandlerContext context)
     {
         // Simulate some work
         await Task.Delay(random.Next(25, 50), context.CancellationToken);
 
-        log.Info($"Order '{message.OrderId}' has been accepted, make sure the payment goes through.");
+        logger.LogInformation($"Order '{message.OrderId}' has been accepted, make sure the payment goes through.");
 
         await ThisIsntGoingToScaleWell();
 
@@ -30,4 +32,8 @@ public class OrderAcceptedHandler : IHandleMessages<OrderAccepted>
     {
         return Task.Delay(random.Next(250, 350));
     }
+
+    readonly ILogger logger;
+
+    static readonly Random random = new Random();
 }

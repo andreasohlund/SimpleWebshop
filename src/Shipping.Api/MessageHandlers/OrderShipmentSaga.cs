@@ -2,18 +2,22 @@
 
 using Billing.Events;
 using NServiceBus;
-using NServiceBus.Logging;
 using Sales.Events;
 
 public class OrderShipmentSaga : Saga<OrderShipmentSaga.SagaData>,
     IAmStartedByMessages<OrderBilled>,
     IAmStartedByMessages<OrderAccepted>
 {
-    static readonly ILog log = LogManager.GetLogger<OrderShipmentSaga>();
+    readonly ILogger logger;
+
+    public OrderShipmentSaga(ILogger<OrderShipmentSaga> logger)
+    {
+        this.logger = logger;
+    }
 
     public Task Handle(OrderAccepted message, IMessageHandlerContext context)
     {
-        log.Info($"Order '{message.OrderId}' has been accepted. Prepare inventory ready for shipping");
+        logger.LogInformation($"Order '{message.OrderId}' has been accepted. Prepare inventory ready for shipping");
         Data.IsOrderAccepted = true;
         CompleteSagaIfBothEventsReceived();
         return Task.CompletedTask;
@@ -21,7 +25,7 @@ public class OrderShipmentSaga : Saga<OrderShipmentSaga.SagaData>,
 
     public Task Handle(OrderBilled message, IMessageHandlerContext context)
     {
-        log.Info($"Order '{message.OrderId}' has been billed.");
+        logger.LogInformation($"Order '{message.OrderId}' has been billed.");
         Data.IsOrderBilled = true;
         CompleteSagaIfBothEventsReceived();
         return Task.CompletedTask;
@@ -38,7 +42,7 @@ public class OrderShipmentSaga : Saga<OrderShipmentSaga.SagaData>,
     {
         if (Data.IsOrderBilled && Data.IsOrderAccepted)
         {
-            log.Info(
+            logger.LogInformation(
                 $"Order '{Data.OrderId}' is ready to ship as both OrderAccepted and OrderBilled events has been received.");
             MarkAsComplete();
         }

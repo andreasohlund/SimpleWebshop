@@ -1,76 +1,69 @@
-﻿namespace ITOps.Shared
+﻿namespace ITOps.Shared;
+
+using Marketing.Internal;
+using NServiceBus;
+using NServiceBus.MessageMutator;
+using NServiceBus.Transport;
+using Sales.Internal;
+
+public static class CommonNServiceBusConfiguration
 {
-    using Marketing.Internal;
-    using NServiceBus;
-    using NServiceBus.Logging;
-    using NServiceBus.MessageMutator;
-    using NServiceBus.Transport;
-    using Sales.Internal;
-    using System;
-
-    public static class CommonNServiceBusConfiguration
+    public static void ApplyCommonNServiceBusConfiguration(this EndpointConfiguration endpointConfiguration, bool enableMonitoring = true)
     {
-        static readonly ILog log = LogManager.GetLogger(typeof(CommonNServiceBusConfiguration));
+        // Transport configuration
+        var rabbitMqConnectionString = Environment.GetEnvironmentVariable("NetCoreDemoRabbitMQTransport");
 
-        public static void ApplyCommonNServiceBusConfiguration(this EndpointConfiguration endpointConfiguration, bool enableMonitoring = true)
+        if (string.IsNullOrEmpty(rabbitMqConnectionString))
         {
-            // Transport configuration
-            var rabbitMqConnectionString = Environment.GetEnvironmentVariable("NetCoreDemoRabbitMQTransport");
+            var transport = endpointConfiguration.UseTransport(new LearningTransport());
+            ConfigureRouting(transport);
+            // Persistence Configuration
+            endpointConfiguration.UsePersistence<LearningPersistence>();
+        }
+        else
+        {
+            var transport = endpointConfiguration.UseTransport(new RabbitMQTransport(RoutingTopology.Conventional(QueueType.Quorum), rabbitMqConnectionString));
 
-            if (string.IsNullOrEmpty(rabbitMqConnectionString))
-            {
-                log.Info("Using Learning Transport");
-                var transport = endpointConfiguration.UseTransport(new LearningTransport());
-                ConfigureRouting(transport);
-                // Persistence Configuration
-                endpointConfiguration.UsePersistence<LearningPersistence>();
-            }
-            else
-            {
-                log.Info("Using RabbitMQ Transport");
-                var transport = endpointConfiguration.UseTransport(new RabbitMQTransport(RoutingTopology.Conventional(QueueType.Quorum), rabbitMqConnectionString));
+            ConfigureRouting(transport);
 
-                ConfigureRouting(transport);
-
-                // Persistence Configuration
-                endpointConfiguration.UsePersistence<LearningPersistence>(); //TODO
-            }
-
-            endpointConfiguration.EnableInstallers();
-
-            // JSON Serializer
-            endpointConfiguration.UseSerialization<NewtonsoftJsonSerializer>();
-
-            if (enableMonitoring)
-            {
-                endpointConfiguration.AuditProcessedMessagesTo("audit");
-
-                // Enable Metrics Collection and Reporting
-                endpointConfiguration
-                    .EnableMetrics()
-                    .SendMetricDataToServiceControl("Particular.Monitoring", TimeSpan.FromSeconds(5));
-
-                // Enable endpoint hearbeat reporting
-                endpointConfiguration.SendHeartbeatTo("Particular.ServiceControl", TimeSpan.FromSeconds(30));
-
-                // Configure saga audit plugin
-                endpointConfiguration.AuditSagaStateChanges("Particular.ServiceControl");
-            }
-
-            // Remove assembly information to be able to reuse message schema from different endpoints w/o sharing messages assembly
-            endpointConfiguration.RegisterMessageMutator(new RemoveAssemblyInfoFromMessageMutator());
+            // Persistence Configuration
+            endpointConfiguration.UsePersistence<LearningPersistence>(); //TODO
         }
 
-        static void ConfigureRouting<T>(RoutingSettings<T> routing)
-            where T : TransportDefinition
-        {
-            routing.RouteToEndpoint(typeof(PlaceOrder), "Sales.Api");
-            routing.RouteToEndpoint(typeof(CancelOrder), "Sales.Api");
-            routing.RouteToEndpoint(typeof(StoreOrder), "Sales.Api");
-            routing.RouteToEndpoint(typeof(AcceptOrder), "Sales.Api");
-            routing.RouteToEndpoint(typeof(RecordConsumerBehavior), "Marketing.Api");
+        endpointConfiguration.EnableInstallers();
 
-            // For transports that do not support publish/subcribe natively, e.g. MSMQ, SqlTransport, call RegisterPublisher
+        // JSON Serializer
+        endpointConfiguration.UseSerialization<NewtonsoftJsonSerializer>();
+
+        if (enableMonitoring)
+        {
+            endpointConfiguration.AuditProcessedMessagesTo("audit");
+
+            // Enable Metrics Collection and Reporting
+            endpointConfiguration
+                .EnableMetrics()
+                .SendMetricDataToServiceControl("Particular.Monitoring", TimeSpan.FromSeconds(5));
+
+            // Enable endpoint hearbeat reporting
+            endpointConfiguration.SendHeartbeatTo("Particular.ServiceControl", TimeSpan.FromSeconds(30));
+
+            // Configure saga audit plugin
+            endpointConfiguration.AuditSagaStateChanges("Particular.ServiceControl");
         }
+
+        // Remove assembly information to be able to reuse message schema from different endpoints w/o sharing messages assembly
+        endpointConfiguration.RegisterMessageMutator(new RemoveAssemblyInfoFromMessageMutator());
+    }
+
+    static void ConfigureRouting<T>(RoutingSettings<T> routing)
+        where T : TransportDefinition
+    {
+        routing.RouteToEndpoint(typeof(PlaceOrder), "Sales.Api");
+        routing.RouteToEndpoint(typeof(CancelOrder), "Sales.Api");
+        routing.RouteToEndpoint(typeof(StoreOrder), "Sales.Api");
+        routing.RouteToEndpoint(typeof(AcceptOrder), "Sales.Api");
+        routing.RouteToEndpoint(typeof(RecordConsumerBehavior), "Marketing.Api");
+
+        // For transports that do not support publish/subcribe natively, e.g. MSMQ, SqlTransport, call RegisterPublisher
     }
 }
