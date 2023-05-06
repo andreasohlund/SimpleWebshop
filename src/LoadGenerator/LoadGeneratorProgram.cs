@@ -10,7 +10,7 @@
 
     internal class LoadGeneratorProgram
     {
-        static async Task Main(string[] args)
+        static async Task Main()
         {
             Console.Title = "Load Generator";
 

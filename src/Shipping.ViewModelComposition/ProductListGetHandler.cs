@@ -6,9 +6,9 @@ using Marketing.Events.ViewModelComposition;
 using Microsoft.AspNetCore.Mvc;
 using ServiceComposer.AspNetCore;
 
-internal class ProductListGetHandler : ICompositionEventsSubscriber
+class ProductListGetHandler : ICompositionEventsSubscriber
 {
-    private readonly HttpClient httpClient;
+    readonly HttpClient httpClient;
 
     public ProductListGetHandler(HttpClient httpClient)
     {
@@ -25,7 +25,7 @@ internal class ProductListGetHandler : ICompositionEventsSubscriber
             var url = $"http://localhost:50686/product?productIds={productIds}";
             var response = await httpClient.GetAsync(url);
 
-            dynamic[] productStockList = await response.Content.AsExpandoArray();
+            var productStockList = await response.Content.AsExpandoArray();
 
             foreach (dynamic productStockStatus in productStockList)
             {

@@ -1,21 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net7.0</TargetFramework>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="NServiceBus" Version="8.0.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\ITOps.Shared\ITOps.Shared.csproj" />
-    <ProjectReference Include="..\Sales.Internal\Sales.Internal.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\ITOps.Shared\ITOps.Shared.csproj" />
+		<ProjectReference Include="..\Sales.Internal\Sales.Internal.csproj" />
+	</ItemGroup>
 
 </Project>
