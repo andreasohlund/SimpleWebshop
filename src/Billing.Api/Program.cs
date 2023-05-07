@@ -20,14 +20,7 @@ static class Program
     static IHostBuilder CreateHostBuilder(string[] args)
     {
         return Host.CreateDefaultBuilder(args)
-            .UseNServiceBus(c =>
-            {
-                var endpointConfiguration = new EndpointConfiguration("Billing.Api"); ;
-
-                endpointConfiguration.ApplyCommonNServiceBusConfiguration();
-
-                return endpointConfiguration;
-            })
+            .UseNServiceBus(_ => EShopEndpointConfiguration.Create("Billing.Api"))
             .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
     }
 }

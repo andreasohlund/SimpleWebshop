@@ -10,12 +10,11 @@ internal class LoadGeneratorProgram
     {
         Console.Title = "Load Generator";
 
-        var endpointConfiguration = new EndpointConfiguration("LoadGenerator");
-        endpointConfiguration.ApplyCommonNServiceBusConfiguration(enableMonitoring: false);
+        var endpointConfiguration = EShopEndpointConfiguration.Create("LoadGenerator", enableMonitoring: false);
+
         endpointConfiguration.SendOnly();
 
-        var endpoint = await Endpoint.Start(endpointConfiguration)
-            .ConfigureAwait(false);
+        var endpoint = await Endpoint.Start(endpointConfiguration);
 
         Console.WriteLine("Press ▲/▼ arrows to increase/decrease messages per second");
         Console.WriteLine("Press S to cause a spike of 25 messages");
@@ -77,11 +76,11 @@ internal class LoadGeneratorProgram
             {
                 if (!paused)
                 {
-                    await SendNextMessage().ConfigureAwait(false);
+                    await SendNextMessage();
                 }
 
                 var delay = 1000 / messagesPerSecond;
-                await Task.Delay(delay).ConfigureAwait(false);
+                await Task.Delay(delay);
             }
         }
 

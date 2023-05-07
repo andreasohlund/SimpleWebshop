@@ -6,10 +6,12 @@ using NServiceBus.MessageMutator;
 using NServiceBus.Transport;
 using Sales.Internal;
 
-public static class CommonNServiceBusConfiguration
+public static class EShopEndpointConfiguration
 {
-    public static void ApplyCommonNServiceBusConfiguration(this EndpointConfiguration endpointConfiguration, bool enableMonitoring = true)
+    public static EndpointConfiguration Create(string endpointName, bool enableMonitoring = true)
     {
+        var endpointConfiguration = new EndpointConfiguration(endpointName);
+
         // Transport configuration
         var rabbitMqConnectionString = Environment.GetEnvironmentVariable("NetCoreDemoRabbitMQTransport");
 
@@ -27,7 +29,7 @@ public static class CommonNServiceBusConfiguration
             ConfigureRouting(transport);
 
             // Persistence Configuration
-            endpointConfiguration.UsePersistence<LearningPersistence>(); //TODO
+            endpointConfiguration.UsePersistence<LearningPersistence>();
         }
 
         endpointConfiguration.EnableInstallers();
@@ -53,6 +55,8 @@ public static class CommonNServiceBusConfiguration
 
         // Remove assembly information to be able to reuse message schema from different endpoints w/o sharing messages assembly
         endpointConfiguration.RegisterMessageMutator(new RemoveAssemblyInfoFromMessageMutator());
+
+        return endpointConfiguration;
     }
 
     static void ConfigureRouting<T>(RoutingSettings<T> routing)

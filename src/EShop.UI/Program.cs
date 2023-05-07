@@ -16,13 +16,6 @@ public class Program
 
     public static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
-          .UseNServiceBus(c =>
-          {
-              var endpointConfiguration = new EndpointConfiguration("EShop.UI");
-
-              endpointConfiguration.ApplyCommonNServiceBusConfiguration();
-              endpointConfiguration.PurgeOnStartup(true);
-
-              return endpointConfiguration;
-          }).ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
+        .UseNServiceBus(_ => EShopEndpointConfiguration.Create("EShop.UI"))
+        .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
 }
