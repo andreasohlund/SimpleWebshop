@@ -37,7 +37,7 @@ public static class EShopEndpointConfiguration
                 .SendMetricDataToServiceControl("Particular.Monitoring", TimeSpan.FromSeconds(5));
 
             // Enable endpoint hearbeat reporting
-            endpointConfiguration.SendHeartbeatTo("Particular.ServiceControl", TimeSpan.FromSeconds(30));
+            endpointConfiguration.SendHeartbeatTo("Particular.ServiceControl");
 
             // Configure saga audit plugin
             endpointConfiguration.AuditSagaStateChanges("Particular.ServiceControl");
