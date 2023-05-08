@@ -1,56 +1,43 @@
-﻿namespace EShop.UI
+﻿namespace EShop.UI;
+
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using ServiceComposer.AspNetCore;
+
+public class Startup
 {
-    using ITOps.Shared;
-    using ITOps.ViewModelComposition;
-    using ITOps.ViewModelComposition.Mvc;
-    using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.Extensions.DependencyInjection;
-    using NServiceBus;
-
-    public class Startup
+    public void ConfigureServices(IServiceCollection services)
     {
-        IEndpointInstance endpoint;
+        services.AddHttpClient();
+        services.AddRouting();
+        services.AddControllersWithViews()
+            .AddRazorRuntimeCompilation();
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public void ConfigureServices(IServiceCollection services)
+        // Configure ServiceComposer
+        services.AddViewModelComposition(options =>
         {
-            services.AddViewModelComposition();
-            services.AddMvc()
-                .AddViewModelCompositionMvcSupport();
+            options.EnableCompositionOverControllers();
+            options.EnableWriteSupport();
+        });
+    }
 
-            endpoint = BootstrapNServiceBusForMessaging(services);
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime appLifetime)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    "default",
-                    "{controller=Products}/{action=Index}/{id?}");
-            });
-
-            app.UseStaticFiles();
-
-            appLifetime.ApplicationStopping.Register(() => endpoint.Stop().GetAwaiter().GetResult());
+            app.UseDeveloperExceptionPage();
         }
-
-        IEndpointInstance BootstrapNServiceBusForMessaging(IServiceCollection services)
+       
+        app.UseRouting();
+        app.UseStaticFiles();
+        app.UseEndpoints(builder =>
         {
-            var endpointConfiguration = new EndpointConfiguration("EShop.UI");
-            endpointConfiguration.PurgeOnStartup(true);
-            endpointConfiguration.ApplyCommonNServiceBusConfiguration();
-            var instance = Endpoint.Start(endpointConfiguration).GetAwaiter().GetResult();
-            services.AddSingleton<IMessageSession>(instance);
-            return instance;
-        }
+            builder.MapControllers();
+
+            // Configure ServiceComposer
+            builder.MapCompositionHandlers();
+        });
     }
 }

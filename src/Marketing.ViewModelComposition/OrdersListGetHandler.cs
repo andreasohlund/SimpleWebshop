@@ -1,48 +1,37 @@
-﻿namespace Marketing.ViewModelComposition
+﻿namespace Marketing.ViewModelComposition;
+
+using ITOps.ViewModelComposition;
+using Microsoft.AspNetCore.Mvc;
+using Sales.Events.ViewModelComposition;
+using ServiceComposer.AspNetCore;
+
+public class OrdersListGetHandler : ICompositionEventsSubscriber
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Net.Http;
-    using ITOps.ViewModelComposition;
-    using ITOps.ViewModelComposition.Json;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Routing;
-    using Sales.Events.ViewModelComposition;
+    readonly HttpClient httpClient;
 
-    internal class OrdersListGetHandler : ISubscribeToViewModelCompositionEvent
+    public OrdersListGetHandler(HttpClient httpClient)
     {
-        public bool Matches(RouteData routeData, string httpVerb, HttpRequest request)
-        {
-            var controller = (string) routeData.Values["controller"];
-            var action = (string) routeData.Values["action"];
+        this.httpClient = httpClient;
+    }
 
-            return HttpMethods.IsGet(httpVerb)
-                   && controller.ToLowerInvariant() == "orders"
-                   && action.ToLowerInvariant() == "index";
-        }
-
-        public void RegisterCallback(DynamicViewModel viewModel)
+    [HttpGet("/orders")]
+    public void Subscribe(ICompositionEventsPublisher publisher)
+    {
+        publisher.Subscribe<OrdersLoaded>(async (@event, request) =>
         {
-            viewModel.RegisterCallback<OrdersLoaded>(async (pageViewModel, eventData, routeData, query) =>
+            var orderIds = string.Join(",", @event.OrdersViewModel.Keys);
+
+            var url = $"http://localhost:50688/product/order?orderIds={orderIds}";
+            var response = await httpClient.GetAsync(url);
+            dynamic productList = await response.Content.AsExpandoArray();
+
+            foreach (dynamic order in @event.OrdersViewModel.Values)
             {
-                var orderIds = string.Join(",", eventData.OrdersDictionary.Keys.ToArray());
-                var url = $"http://localhost:50688/product/order?orderIds={orderIds}";
-                var client = new HttpClient();
-                var response = await client.GetAsync(url);
-                dynamic productList = await response.Content.AsExpandoArrayAsync();
+                var product = ((IEnumerable<dynamic>) productList).Single(p => p.ProductId == order.ProductId);
 
-                foreach (var orderId in eventData.OrdersDictionary.Keys)
-                {
-                    var order = eventData.OrdersDictionary[orderId];
-
-                    // For each order, fill in the product details. 
-                    var productDetail =
-                        ((IEnumerable<dynamic>) productList).First(product => product.productId == order.productId);
-
-                    order.name = productDetail.name;
-                    order.imageUrl = productDetail.imageUrl;
-                }
-            });
-        }
+                order.Name = product.Name;
+                order.ImageUrl = product.ImageUrl;
+            }
+        });
     }
 }

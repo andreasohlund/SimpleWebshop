@@ -1,22 +1,24 @@
-﻿namespace Marketing.Api.MessageHandlers
+﻿namespace Marketing.Api.MessageHandlers;
+
+using Marketing.Internal;
+using NServiceBus;
+
+public class RecordConsumerBehaviorHandler : IHandleMessages<RecordConsumerBehavior>
 {
-    using System;
-    using System.Threading.Tasks;
-    using Marketing.Internal;
-    using NServiceBus;
-    using NServiceBus.Logging;
+    static readonly Random random = new Random();
 
-    public class RecordConsumerBehaviorHandler : IHandleMessages<RecordConsumerBehavior>
+    readonly ILogger logger;
+
+    public RecordConsumerBehaviorHandler(ILogger<RecordConsumerBehaviorHandler> logger)
     {
-        static readonly ILog log = LogManager.GetLogger<RecordConsumerBehaviorHandler>();
-        static readonly Random random = new Random();
+        this.logger = logger;
+    }
 
-        public async Task Handle(RecordConsumerBehavior message, IMessageHandlerContext context)
-        {
-            // Simulate some work
-            await Task.Delay(random.Next(25, 50));
+    public async Task Handle(RecordConsumerBehavior message, IMessageHandlerContext context)
+    {
+        // Simulate some work
+        await Task.Delay(random.Next(25, 50), context.CancellationToken);
 
-            log.Info("Perform marketing campaign.");
-        }
+        logger.LogInformation("Perform marketing campaign.");
     }
 }

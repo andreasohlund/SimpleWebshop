@@ -1,28 +1,30 @@
-﻿namespace Shipping.Api
+﻿namespace Shipping.Api;
+
+using Microsoft.AspNetCore.Hosting;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Hosting;
+using NServiceBus;
+using ITOps.Shared;
+using Shipping.Api.Data;
+
+static class Program
 {
-    using System.IO;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.Extensions.Configuration;
-
-    public class Program
+    public static async Task Main(string[] args)
     {
-        public static void Main(string[] args)
-        {
-            var basePath = Directory.GetCurrentDirectory();
+        StockItemDbContext.SeedDatabase();
 
-            var config = new ConfigurationBuilder()
-                .SetBasePath(basePath)
-                .Build();
+        using var host = CreateHostBuilder(args).Build();
+        await host.StartAsync();
 
-            var host = new WebHostBuilder()
-                .UseKestrel()
-                .UseUrls("http://localhost:50686")
-                .UseContentRoot(basePath)
-                .UseConfiguration(config)
-                .UseStartup<Startup>()
-                .Build();
+        Console.WriteLine("Press any key to shutdown");
+        Console.ReadKey();
+        await host.StopAsync();
+    }
 
-            host.Run();
-        }
+    static IHostBuilder CreateHostBuilder(string[] args)
+    {
+        return Host.CreateDefaultBuilder(args)
+            .UseNServiceBus(_ => EShopEndpointConfiguration.Create("Shipping.Api"))
+            .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
     }
 }

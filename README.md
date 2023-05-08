@@ -1,4 +1,4 @@
-# NetCoreDemo
+# SimpleWebshop
 
 A demonstration of [NServiceBus](https://particular.net/nservicebus) and the [Particular Service Platform](https://particular.net/service-platform) showing several capabilities all at once:
 

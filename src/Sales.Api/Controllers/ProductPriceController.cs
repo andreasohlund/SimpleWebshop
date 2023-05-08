@@ -4,8 +4,7 @@
     using System.Linq;
     using Microsoft.AspNetCore.Mvc;
     using Sales.Api.Data;
-    using Sales.Api.Models;
-
+    
     [Route("product")]
     public class ProductPriceController : Controller
     {

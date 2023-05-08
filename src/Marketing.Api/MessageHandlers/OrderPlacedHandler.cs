@@ -1,31 +1,32 @@
-﻿namespace Marketing.Api.MessageHandlers
+﻿namespace Marketing.Api.MessageHandlers;
+
+using Marketing.Api.Data;
+using Marketing.Api.Models;
+using NServiceBus;
+using NServiceBus.Logging;
+using Sales.Events;
+
+public class OrderPlacedHandler : IHandleMessages<OrderPlaced>
 {
-    using System.Threading.Tasks;
-    using Marketing.Api.Data;
-    using Marketing.Api.Models;
-    using NServiceBus;
-    using NServiceBus.Logging;
-    using Sales.Events;
+    readonly ProductDetailsDbContext dbContext;
+    readonly ILogger logger;
 
-    public class OrderPlacedHandler : IHandleMessages<OrderPlaced>
+    public OrderPlacedHandler(ILogger<OrderPlacedHandler> logger, ProductDetailsDbContext dbContext)
     {
-        static readonly ILog log = LogManager.GetLogger<OrderPlacedHandler>();
-        readonly ProductDetailsDbContext dbContext;
+        this.dbContext = dbContext;
+        this.logger = logger;
+    }
 
-        public OrderPlacedHandler(ProductDetailsDbContext dbContext)
-        {
-            this.dbContext = dbContext;
-        }
+    public async Task Handle(OrderPlaced message, IMessageHandlerContext context)
+    {
+        logger.LogInformation("Storing what products just got recently bought.");
 
-        public async Task Handle(OrderPlaced message, IMessageHandlerContext context)
+        await dbContext.OrderDetails.AddAsync(new OrderDetails
         {
-            log.Info("Storing what products just got recently placed.");
-            await dbContext.OrderDetails.AddAsync(new OrderDetails
-            {
-                ProductId = message.ProductId,
-                OrderId = message.OrderId
-            }).ConfigureAwait(false);
-            await dbContext.SaveChangesAsync().ConfigureAwait(false);
-        }
+            ProductId = message.ProductId,
+            OrderId = message.OrderId
+        }, context.CancellationToken);
+
+        await dbContext.SaveChangesAsync(context.CancellationToken);
     }
 }

@@ -1,15 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ITOps.ViewModelComposition.Mvc\ITOps.ViewModelComposition.Mvc.csproj" />
-    <ProjectReference Include="..\ITOps.ViewModelComposition\ITOps.ViewModelComposition.csproj" />
-    <ProjectReference Include="..\Marketing.Events\Marketing.Events.csproj" />
-    <ProjectReference Include="..\Marketing.Internal\Marketing.Internal.csproj" />
-    <ProjectReference Include="..\Sales.Events\Sales.Events.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\ITOps.ViewModelComposition\ITOps.ViewModelComposition.csproj" />
+		<ProjectReference Include="..\Marketing.Events\Marketing.Events.csproj" />
+		<ProjectReference Include="..\Marketing.Internal\Marketing.Internal.csproj" />
+		<ProjectReference Include="..\Sales.Events\Sales.Events.csproj" />
+	</ItemGroup>
 
 </Project>

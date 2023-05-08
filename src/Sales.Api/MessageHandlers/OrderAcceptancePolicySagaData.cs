@@ -1,10 +1,9 @@
-﻿namespace Sales.Api.MessageHandlers
-{
-    using NServiceBus;
+﻿namespace Sales.Api.MessageHandlers;
 
-    public class OrderAcceptancePolicySagaData : ContainSagaData
-    {
-        public string OrderId { get; set; }
-        public int ProductId { get; set; }
-    }
+using NServiceBus;
+
+public class OrderAcceptancePolicySagaData : ContainSagaData
+{
+    public string OrderId { get; set; }
+    public int ProductId { get; set; }
 }

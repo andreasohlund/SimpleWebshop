@@ -1,26 +1,25 @@
-﻿namespace Sales.Api.MessageHandlers
+﻿namespace Sales.Api.MessageHandlers;
+
+using NServiceBus;
+using Sales.Api.Data;
+using Sales.Internal;
+
+public class CancelOrderHandler : IHandleMessages<CancelOrder>
 {
-    using System.Linq;
-    using System.Threading.Tasks;
-    using NServiceBus;
-    using Sales.Api.Data;
-    using Sales.Internal;
+    readonly SalesDbContext dbContext;
 
-    public class CancelOrderHandler : IHandleMessages<CancelOrder>
+    public CancelOrderHandler(SalesDbContext dbContext)
     {
-        readonly SalesDbContext dbContext;
+        this.dbContext = dbContext;
+    }
 
-        public CancelOrderHandler(SalesDbContext dbContext)
-        {
-            this.dbContext = dbContext;
-        }
+    public async Task Handle(CancelOrder message, IMessageHandlerContext context)
+    {
+        // Find Order and update the database.
+        var order = dbContext.OrderDetails.First(m => m.OrderId == message.OrderId);
+        
+        order.IsOrderCancelled = true;
 
-        public async Task Handle(CancelOrder message, IMessageHandlerContext context)
-        {
-            // Find Order and update the database.
-            var order = dbContext.OrderDetails.First(m => m.OrderId == message.OrderId);
-            order.IsOrderCancelled = true;
-            await dbContext.SaveChangesAsync().ConfigureAwait(false);
-        }
+        await dbContext.SaveChangesAsync(context.CancellationToken);
     }
 }

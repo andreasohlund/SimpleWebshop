@@ -1,22 +1,19 @@
-﻿
+﻿namespace EShop.UI.Controllers;
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.AspNetCore.Mvc;
 
-namespace EShop.UI.Controllers
+[Route("orders")]
+
+public class OrdersController : Controller
 {
-    using Microsoft.AspNetCore.Mvc;
-
-    public class OrdersController : Controller
+    public IActionResult Index()
     {
-        // GET: /<controller>/
-        public IActionResult Index()
-        {
-            return View();
-        }
+        return View();
+    }
 
-        public IActionResult CancelOrder(int id)
-        {
-            return View();
-        }
+    [HttpPost("cancelorder/{id}")]
+    public IActionResult CancelOrder(string id)
+    {
+        return View();
     }
 }

@@ -1,29 +1,28 @@
-﻿namespace Shipping.Api.MessageHandlers
+﻿namespace Shipping.Api.MessageHandlers;
+
+using NServiceBus;
+using NServiceBus.Logging;
+using Shipping.Api.Data;
+using Warehouse.Azure;
+
+public class ItemStockUpdatedHandler : IHandleMessages<ItemStockUpdated>
 {
-    using System.Linq;
-    using System.Threading.Tasks;
-    using NServiceBus;
-    using NServiceBus.Logging;
-    using Shipping.Api.Data;
-    using Warehouse.Azure;
+    readonly ILogger logger;
+    readonly StockItemDbContext dbContext;
 
-    public class ItemStockUpdatedHandler : IHandleMessages<ItemStockUpdated>
+    public ItemStockUpdatedHandler(ILogger<ItemStockUpdatedHandler> logger, StockItemDbContext dbContext)
     {
-        static readonly ILog log = LogManager.GetLogger<ItemStockUpdated>();
-        readonly StockItemDbContext dbContext;
+        this.logger = logger;
+        this.dbContext = dbContext;
+    }
 
-        public ItemStockUpdatedHandler(StockItemDbContext dbContext)
-        {
-            this.dbContext = dbContext;
-        }
+    public async Task Handle(ItemStockUpdated message, IMessageHandlerContext context)
+    {
+        logger.LogInformation($"Product Id: '{message.ProductId}', Availability: {message.IsAvailable}");
 
-        public async Task Handle(ItemStockUpdated message, IMessageHandlerContext context)
-        {
-            log.Info($"Product Id: '{message.ProductId}', Availability: {message.IsAvailable}");
+        var stockItem = dbContext.StockItems.First(x => x.ProductId == message.ProductId);
+        stockItem.InStock = message.IsAvailable;
 
-            var stockItem = dbContext.StockItems.First(x => x.ProductId == message.ProductId);
-            stockItem.InStock = message.IsAvailable;
-            await dbContext.SaveChangesAsync().ConfigureAwait(false);
-        }
+        await dbContext.SaveChangesAsync(context.CancellationToken);
     }
 }

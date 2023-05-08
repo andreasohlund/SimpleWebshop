@@ -1,6 +1,5 @@
-﻿namespace Sales.Api.MessageHandlers
+﻿namespace Sales.Api.MessageHandlers;
+
+public class BuyersRemorseIsOver
 {
-    public class BuyersRemorseIsOver
-    {
-    }
 }

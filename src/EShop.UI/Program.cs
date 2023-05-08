@@ -1,28 +1,21 @@
-﻿namespace EShop.UI
+﻿namespace EShop.UI;
+
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
+using NServiceBus;
+using ITOps.Shared;
+
+public class Program
 {
-    using System.IO;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.Extensions.Configuration;
-
-    public class Program
+    public static async Task Main(string[] args)
     {
-        public static void Main(string[] args)
-        {
-            var basePath = Directory.GetCurrentDirectory();
-
-            var config = new ConfigurationBuilder()
-                .SetBasePath(basePath)
-                .Build();
-
-            var host = new WebHostBuilder()
-                .UseKestrel()
-                .UseUrls("http://localhost:56039")
-                .UseContentRoot(basePath)
-                .UseConfiguration(config)
-                .UseStartup<Startup>()
-                .Build();
-
-            host.Run();
-        }
+        await CreateHostBuilder(args)
+            .Build()
+            .RunAsync();
     }
+
+    public static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+        .UseNServiceBus(_ => EShopEndpointConfiguration.Create("EShop.UI"))
+        .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
 }

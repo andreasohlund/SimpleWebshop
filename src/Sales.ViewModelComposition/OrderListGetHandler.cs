@@ -1,63 +1,58 @@
-﻿namespace Sales.ViewModelComposition
+﻿namespace Sales.ViewModelComposition;
+
+using ITOps.ViewModelComposition;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Sales.Events.ViewModelComposition;
+using ServiceComposer.AspNetCore;
+using System.Dynamic;
+
+class OrderListGetHandler : ICompositionRequestsHandler
 {
-    using System.Collections.Generic;
-    using System.Dynamic;
-    using System.Net.Http;
-    using System.Threading.Tasks;
-    using ITOps.ViewModelComposition;
-    using ITOps.ViewModelComposition.Json;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Routing;
-    using Sales.Events.ViewModelComposition;
+    readonly HttpClient httpClient;
 
-    internal class OrderListGetHandler : IHandleRequests
+    public OrderListGetHandler(HttpClient httpClient)
     {
-        public bool Matches(RouteData routeData, string httpVerb, HttpRequest request)
-        {
-            var controller = (string) routeData.Values["controller"];
-            var action = (string) routeData.Values["action"];
+        this.httpClient = httpClient;
+    }
 
-            return HttpMethods.IsGet(httpVerb)
-                   && controller.ToLowerInvariant() == "orders"
-                   && action.ToLowerInvariant() == "index";
+    [HttpGet("/orders")]
+    public async Task Handle(HttpRequest request)
+    {
+        //invoke Sales back-end API to retrieve the currently placed orders
+        var url = $"http://localhost:50687/order/";
+        var response = await httpClient.GetAsync(url);
+
+        dynamic orders = await response.Content.AsExpandoArray();
+        var ordersViewModel = MapToViewModelDictionary(orders);
+
+        var context = request.GetCompositionContext();
+        var vm = request.GetComposedResponseModel();
+
+        await context.RaiseEvent(new OrdersLoaded
+        {
+            OrdersViewModel = ordersViewModel
+        });
+
+        vm.Orders = ordersViewModel.Values;
+    }
+
+    IDictionary<dynamic, dynamic> MapToViewModelDictionary(dynamic[] orders)
+    {
+        var dictionary = new Dictionary<dynamic, dynamic>();
+
+        foreach (var order in orders)
+        {
+            dynamic orderDetailObject = new ExpandoObject();
+            orderDetailObject.OrderId = order.OrderId;
+            orderDetailObject.Price = order.Price;
+            orderDetailObject.OrderPlacedOn = order.OrderPlacedOn;
+            orderDetailObject.IsOrderAccepted = order.IsOrderAccepted;
+            orderDetailObject.IsOrderCancelled = order.IsOrderCancelled;
+            orderDetailObject.ProductId = order.ProductId;
+            dictionary[order.OrderId] = orderDetailObject;
         }
 
-        public async Task Handle(dynamic vm, RouteData routeData, HttpRequest request)
-        {
-            //invoke Sales back-end API to retrieve the currently placed orders
-            var url = $"http://localhost:50687/order/";
-            var client = new HttpClient();
-            var response = await client.GetAsync(url);
-            dynamic orders = await response.Content.AsExpandoArrayAsync();
-
-            // Create a dictionary that's keyed by OrderId. 
-            var orderDictionary = MapToViewModelDictionary(orders);
-
-            // Raise an event so that other views that need to
-            // enrich the view with more data related to each OrderId .  
-            await vm.RaiseEventAsync(new OrdersLoaded {OrdersDictionary = orderDictionary});
-
-            // Store the enriched data in the viewmodel.
-            vm.Orders = orderDictionary.Values;
-        }
-
-        IDictionary<dynamic, dynamic> MapToViewModelDictionary(dynamic[] orders)
-        {
-            var dictionary = new Dictionary<dynamic, dynamic>();
-
-            foreach (var order in orders)
-            {
-                dynamic orderDetailObject = new ExpandoObject();
-                orderDetailObject.orderId = order.orderId;
-                orderDetailObject.price = order.price;
-                orderDetailObject.orderPlacedOn = order.orderPlacedOn;
-                orderDetailObject.isOrderAccepted = order.isOrderAccepted;
-                orderDetailObject.isOrderCancelled = order.isOrderCancelled;
-                orderDetailObject.productId = order.productId;
-                dictionary[order.orderId] = orderDetailObject;
-            }
-
-            return dictionary;
-        }
+        return dictionary;
     }
 }

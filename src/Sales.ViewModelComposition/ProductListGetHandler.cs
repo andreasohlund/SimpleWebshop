@@ -1,45 +1,35 @@
-﻿namespace Sales.ViewModelComposition
+﻿namespace Sales.ViewModelComposition;
+
+using ITOps.ViewModelComposition;
+using Marketing.Events.ViewModelComposition;
+using Microsoft.AspNetCore.Mvc;
+using ServiceComposer.AspNetCore;
+
+internal class ProductListGetHandler : ICompositionEventsSubscriber
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Net.Http;
-    using ITOps.ViewModelComposition;
-    using ITOps.ViewModelComposition.Json;
-    using Marketing.Events.ViewModelComposition;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Routing;
+    private readonly HttpClient httpClient;
 
-    internal class ProductListGetHandler : ISubscribeToViewModelCompositionEvent
+    public ProductListGetHandler(HttpClient httpClient)
     {
-        public bool Matches(RouteData routeData, string httpVerb, HttpRequest request)
-        {
-            var controller = (string) routeData.Values["controller"];
-            var action = (string) routeData.Values["action"];
+        this.httpClient = httpClient;
+    }
 
-            return HttpMethods.IsGet(httpVerb)
-                   && controller.ToLowerInvariant() == "products"
-                   && action.ToLowerInvariant() == "index";
-        }
-
-        public void RegisterCallback(DynamicViewModel viewModel)
+    [HttpGet("/products")]
+    public void Subscribe(ICompositionEventsPublisher publisher)
+    {
+        publisher.Subscribe<ProductsLoaded>(async (@event, request) =>
         {
-            viewModel.RegisterCallback<ProductsLoaded>(async (pageViewModel, eventData, routeData, query) =>
+            var productIds = string.Join(",", @event.AvailableProductsViewModel.Keys);
+
+            var url = $"http://localhost:50687/product?productIds={productIds}";
+            var response = await httpClient.GetAsync(url);
+
+            dynamic[] productPrices = await response.Content.AsExpandoArray();
+
+            foreach (dynamic productPrice in productPrices)
             {
-                var productIds = string.Join(",", eventData.OrdersDictionary.Keys.ToArray());
-                var url = $"http://localhost:50687/product?productIds={productIds}";
-                var client = new HttpClient();
-                var response = await client.GetAsync(url);
-                dynamic productList = await response.Content.AsExpandoArrayAsync();
-
-                foreach (var productId in eventData.OrdersDictionary.Keys)
-                {
-                    var product = eventData.OrdersDictionary[productId];
-
-                    // For each product, fill in the price information. 
-                    var productPrice = ((IEnumerable<dynamic>) productList).First(p => p.productId == productId);
-                    product.price = productPrice.price;
-                }
-            });
-        }
+                @event.AvailableProductsViewModel[productPrice.Id].Price = productPrice.Price;
+            }
+        });
     }
 }
