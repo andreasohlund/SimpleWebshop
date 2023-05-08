@@ -4,7 +4,7 @@ using NServiceBus;
 using Sales.Events;
 using Sales.Internal;
 
-public class OrderAcceptancePolicySaga : Saga<OrderAcceptancePolicySaga.SagaData>,
+public class OrderAcceptancePolicySaga : Saga<OrderAcceptancePolicySagaData>,
     IAmStartedByMessages<PlaceOrder>,
     IAmStartedByMessages<CancelOrder>,
     IHandleTimeouts<BuyersRemorseIsOver>
@@ -55,16 +55,10 @@ public class OrderAcceptancePolicySaga : Saga<OrderAcceptancePolicySaga.SagaData
         });
     }
 
-    protected override void ConfigureHowToFindSaga(SagaPropertyMapper<SagaData> mapper)
+    protected override void ConfigureHowToFindSaga(SagaPropertyMapper<OrderAcceptancePolicySagaData> mapper)
     {
         mapper.MapSaga(saga => saga.OrderId)
             .ToMessage<PlaceOrder>(message => message.OrderId)
             .ToMessage<CancelOrder>(message => message.OrderId);
-    }
-
-    public class SagaData : ContainSagaData
-    {
-        public string OrderId { get; set; }
-        public int ProductId { get; set; }
     }
 }

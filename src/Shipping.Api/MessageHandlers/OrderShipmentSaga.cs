@@ -4,7 +4,7 @@ using Billing.Events;
 using NServiceBus;
 using Sales.Events;
 
-public class OrderShipmentSaga : Saga<OrderShipmentSaga.SagaData>,
+public class OrderShipmentSaga : Saga<OrderShipmentSagaData>,
     IAmStartedByMessages<OrderBilled>,
     IAmStartedByMessages<OrderAccepted>
 {
@@ -31,7 +31,7 @@ public class OrderShipmentSaga : Saga<OrderShipmentSaga.SagaData>,
         return Task.CompletedTask;
     }
 
-    protected override void ConfigureHowToFindSaga(SagaPropertyMapper<OrderShipmentSaga.SagaData> mapper)
+    protected override void ConfigureHowToFindSaga(SagaPropertyMapper<OrderShipmentSagaData> mapper)
     {
         mapper.MapSaga(saga => saga.OrderId)
             .ToMessage<OrderBilled>(message => message.OrderId)
@@ -46,13 +46,5 @@ public class OrderShipmentSaga : Saga<OrderShipmentSaga.SagaData>,
                 $"Order '{Data.OrderId}' is ready to ship as both OrderAccepted and OrderBilled events has been received.");
             MarkAsComplete();
         }
-    }
-
-
-    public class SagaData : ContainSagaData
-    {
-        public string OrderId { get; set; }
-        public bool IsOrderAccepted { get; set; }
-        public bool IsOrderBilled { get; set; }
     }
 }

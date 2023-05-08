@@ -8,6 +8,7 @@
 		<PackageReference Include="NServiceBus" Version="8.0.3" />
 		<PackageReference Include="NServiceBus.Extensions.Hosting" Version="2.0.0" />
 		<PackageReference Include="NServiceBus.Heartbeat" Version="4.0.0" />
+		<PackageReference Include="NServiceBus.Persistence.AzureTable" Version="5.0.1" />
 		<PackageReference Include="NServiceBus.SagaAudit" Version="4.0.0" />
 		<PackageReference Include="NServiceBus.Metrics.ServiceControl" Version="4.0.0" />
 		<PackageReference Include="NServiceBus.Newtonsoft.Json" Version="3.0.0" />

@@ -13,14 +13,16 @@ public static class EShopEndpointConfiguration
         var endpointConfiguration = new EndpointConfiguration(endpointName);
 
         // Transport configuration
-        var connectionString = Environment.GetEnvironmentVariable("SimpleEShopConnectionString");
-        var transport = endpointConfiguration.UseTransport(new AzureServiceBusTransport(connectionString));
-
         //var transport = endpointConfiguration.UseTransport(new LearningTransport());
+        var transport = endpointConfiguration.UseTransport(new AzureServiceBusTransport(Environment.GetEnvironmentVariable("SimpleEShopConnectionString")));
+
         ConfigureRouting(transport);
-        
+
         // Persistence Configuration
-        endpointConfiguration.UsePersistence<LearningPersistence>();
+        //endpointConfiguration.UsePersistence<LearningPersistence>();
+
+        endpointConfiguration.UsePersistence<AzureTablePersistence>()
+            .ConnectionString(Environment.GetEnvironmentVariable("SimpleEShopStorageConnectionString"));
 
         endpointConfiguration.EnableInstallers();
 
