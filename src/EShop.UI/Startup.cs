@@ -15,6 +15,7 @@ public class Startup
         services.AddControllersWithViews()
             .AddRazorRuntimeCompilation();
 
+        // Configure ServiceComposer
         services.AddViewModelComposition(options =>
         {
             options.EnableCompositionOverControllers();
@@ -28,16 +29,14 @@ public class Startup
         {
             app.UseDeveloperExceptionPage();
         }
-        else
-        {
-            app.UseExceptionHandler("/Home/Error");
-        }
-
+       
         app.UseRouting();
         app.UseStaticFiles();
         app.UseEndpoints(builder =>
         {
             builder.MapControllers();
+
+            // Configure ServiceComposer
             builder.MapCompositionHandlers();
         });
     }

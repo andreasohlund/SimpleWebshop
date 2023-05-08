@@ -11,9 +11,9 @@
 		<PackageReference Include="NServiceBus.SagaAudit" Version="4.0.0" />
 		<PackageReference Include="NServiceBus.Metrics.ServiceControl" Version="4.0.0" />
 		<PackageReference Include="NServiceBus.Newtonsoft.Json" Version="3.0.0" />
-		<PackageReference Include="NServiceBus.RabbitMQ" Version="8.0.2" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.5" />
+		<PackageReference Include="NServiceBus.Transport.AzureServiceBus" Version="3.2.0" />
 	</ItemGroup>
 
 	<ItemGroup>

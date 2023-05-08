@@ -13,24 +13,14 @@ public static class EShopEndpointConfiguration
         var endpointConfiguration = new EndpointConfiguration(endpointName);
 
         // Transport configuration
-        var rabbitMqConnectionString = Environment.GetEnvironmentVariable("NetCoreDemoRabbitMQTransport");
+        var connectionString = Environment.GetEnvironmentVariable("SimpleEShopConnectionString");
+        var transport = endpointConfiguration.UseTransport(new AzureServiceBusTransport(connectionString));
 
-        if (string.IsNullOrEmpty(rabbitMqConnectionString))
-        {
-            var transport = endpointConfiguration.UseTransport(new LearningTransport());
-            ConfigureRouting(transport);
-            // Persistence Configuration
-            endpointConfiguration.UsePersistence<LearningPersistence>();
-        }
-        else
-        {
-            var transport = endpointConfiguration.UseTransport(new RabbitMQTransport(RoutingTopology.Conventional(QueueType.Quorum), rabbitMqConnectionString));
-
-            ConfigureRouting(transport);
-
-            // Persistence Configuration
-            endpointConfiguration.UsePersistence<LearningPersistence>();
-        }
+        //var transport = endpointConfiguration.UseTransport(new LearningTransport());
+        ConfigureRouting(transport);
+        
+        // Persistence Configuration
+        endpointConfiguration.UsePersistence<LearningPersistence>();
 
         endpointConfiguration.EnableInstallers();
 
