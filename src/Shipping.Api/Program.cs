@@ -11,6 +11,8 @@ static class Program
 {
     public static async Task Main(string[] args)
     {
+        Console.Title = "Shipping";
+
         StockItemDbContext.SeedDatabase();
 
         using var host = CreateHostBuilder(args).Build();

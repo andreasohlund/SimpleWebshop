@@ -9,6 +9,8 @@ static class Program
 {
     public static async Task Main(string[] args)
     {
+        Console.Title = "Billing";
+
         using var host = CreateHostBuilder(args).Build();
         await host.StartAsync();
 

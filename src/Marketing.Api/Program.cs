@@ -10,6 +10,8 @@ static class Program
 {
     public static async Task Main(string[] args)
     {
+        Console.Title = "Marketing";
+
         ProductDetailsDbContext.SeedDatabase();
 
         using var host = CreateHostBuilder(args).Build();
