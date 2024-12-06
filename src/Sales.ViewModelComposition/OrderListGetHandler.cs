@@ -7,15 +7,8 @@ using Sales.Events.ViewModelComposition;
 using ServiceComposer.AspNetCore;
 using System.Dynamic;
 
-class OrderListGetHandler : ICompositionRequestsHandler
+class OrderListGetHandler(HttpClient httpClient) : ICompositionRequestsHandler
 {
-    readonly HttpClient httpClient;
-
-    public OrderListGetHandler(HttpClient httpClient)
-    {
-        this.httpClient = httpClient;
-    }
-
     [HttpGet("/orders")]
     public async Task Handle(HttpRequest request)
     {

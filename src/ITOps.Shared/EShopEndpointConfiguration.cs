@@ -27,22 +27,41 @@ public static class EShopEndpointConfiguration
         endpointConfiguration.EnableInstallers();
 
         // JSON Serializer
-        endpointConfiguration.UseSerialization<NewtonsoftJsonSerializer>();
+        endpointConfiguration.UseSerialization<SystemJsonSerializer>();
 
         if (enableMonitoring)
         {
-            endpointConfiguration.AuditProcessedMessagesTo("audit");
+            endpointConfiguration.ConnectToServicePlatform(new ServicePlatformConnectionConfiguration
+            {
+                Heartbeats = new()
+                {
+                    Enabled = true,
+                    HeartbeatsQueue = "Particular.ServiceControl",
+                },
+                CustomChecks = new()
+                {
+                    Enabled = true,
+                    CustomChecksQueue = "Particular.ServiceControl"
+                },
+                ErrorQueue = "error",
+                SagaAudit = new()
+                {
+                    Enabled = true,
+                    SagaAuditQueue = "audit"
+                },
+                MessageAudit = new()
+                {
+                    Enabled = true,
+                    AuditQueue = "audit"
+                },
 
-            // Enable Metrics Collection and Reporting
-            endpointConfiguration
-                .EnableMetrics()
-                .SendMetricDataToServiceControl("Particular.Monitoring", TimeSpan.FromSeconds(5));
-
-            // Enable endpoint hearbeat reporting
-            endpointConfiguration.SendHeartbeatTo("Particular.ServiceControl");
-
-            // Configure saga audit plugin
-            endpointConfiguration.AuditSagaStateChanges("Particular.ServiceControl");
+                Metrics = new()
+                {
+                    Enabled = true,
+                    MetricsQueue = "Particular.Monitoring",
+                    Interval = TimeSpan.FromSeconds(1)
+                }
+            });
         }
 
         // Remove assembly information to be able to reuse message schema from different endpoints w/o sharing messages assembly

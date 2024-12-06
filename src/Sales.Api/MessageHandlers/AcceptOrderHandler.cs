@@ -5,15 +5,8 @@ using Sales.Api.Data;
 using Sales.Events;
 using Sales.Internal;
 
-public class AcceptOrderHandler : IHandleMessages<AcceptOrder>
+public class AcceptOrderHandler(SalesDbContext dbContext) : IHandleMessages<AcceptOrder>
 {
-    readonly SalesDbContext dbContext;
-
-    public AcceptOrderHandler(SalesDbContext dbContext)
-    {
-        this.dbContext = dbContext;
-    }
-
     public async Task Handle(AcceptOrder message, IMessageHandlerContext context)
     {
         // Find Order and update the database.

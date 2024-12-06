@@ -4,17 +4,12 @@ using NServiceBus;
 using Sales.Events;
 using Sales.Internal;
 
-public class OrderAcceptancePolicySaga : Saga<OrderAcceptancePolicySagaData>,
+public class OrderAcceptancePolicySaga(ILogger<OrderAcceptancePolicySaga> logger) : Saga<OrderAcceptancePolicySagaData>,
     IAmStartedByMessages<PlaceOrder>,
     IAmStartedByMessages<CancelOrder>,
     IHandleTimeouts<BuyersRemorseIsOver>
 {
-    readonly ILogger logger;
-
-    public OrderAcceptancePolicySaga(ILogger<OrderAcceptancePolicySaga> logger)
-    {
-        this.logger = logger;
-    }
+    readonly ILogger logger = logger;
 
     public async Task Handle(PlaceOrder message, IMessageHandlerContext context)
     {

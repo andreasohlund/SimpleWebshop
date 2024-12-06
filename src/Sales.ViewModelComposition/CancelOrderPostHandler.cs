@@ -7,21 +7,14 @@ using NServiceBus;
 using Sales.Internal;
 using ServiceComposer.AspNetCore;
 
-public class CancelOrderPostHandler : ICompositionRequestsHandler
+public class CancelOrderPostHandler(IMessageSession messageSession) : ICompositionRequestsHandler
 {
-    readonly IMessageSession session;
-
-    public CancelOrderPostHandler(IMessageSession messageSession)
-    {
-        session = messageSession;
-    }
-
     [HttpPost("/orders/cancelorder/{id}")]
     public async Task Handle(HttpRequest request)
     {
         var orderId = (string)request.HttpContext.GetRouteData().Values["id"];
 
-        await session.Send(new CancelOrder
+        await messageSession.Send(new CancelOrder
         {
             OrderId = orderId
         });

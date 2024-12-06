@@ -1,9 +1,8 @@
-﻿namespace Sales.Events
-{
-    using NServiceBus;
+﻿namespace Sales.Events;
 
-    public class OrderCancelled : IEvent
-    {
-        public string OrderId { get; set; }
-    }
+using NServiceBus;
+
+public class OrderCancelled : IEvent
+{
+    public string OrderId { get; set; }
 }

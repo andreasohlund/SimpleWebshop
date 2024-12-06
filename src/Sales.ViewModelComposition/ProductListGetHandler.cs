@@ -5,15 +5,8 @@ using Marketing.Events.ViewModelComposition;
 using Microsoft.AspNetCore.Mvc;
 using ServiceComposer.AspNetCore;
 
-internal class ProductListGetHandler : ICompositionEventsSubscriber
+public class ProductListGetHandler(HttpClient httpClient) : ICompositionEventsSubscriber
 {
-    private readonly HttpClient httpClient;
-
-    public ProductListGetHandler(HttpClient httpClient)
-    {
-        this.httpClient = httpClient;
-    }
-
     [HttpGet("/products")]
     public void Subscribe(ICompositionEventsPublisher publisher)
     {

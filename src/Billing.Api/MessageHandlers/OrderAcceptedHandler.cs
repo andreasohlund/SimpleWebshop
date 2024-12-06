@@ -2,20 +2,14 @@
 
 using Billing.Events;
 using NServiceBus;
-using NServiceBus.Logging;
 using Sales.Events;
 
-public class OrderAcceptedHandler : IHandleMessages<OrderAccepted>
+public class OrderAcceptedHandler(ILogger<OrderAcceptedHandler> logger) : IHandleMessages<OrderAccepted>
 {
-    public OrderAcceptedHandler(ILogger<OrderAcceptedHandler> logger)
-    {
-        this.logger = logger;
-    }
-
     public async Task Handle(OrderAccepted message, IMessageHandlerContext context)
     {
         // Simulate some work
-        await Task.Delay(random.Next(25, 50), context.CancellationToken);
+        await Task.Delay(Random.Shared.Next(25, 50), context.CancellationToken);
 
         logger.LogInformation($"Order '{message.OrderId}' has been accepted, make sure the payment goes through.");
 
@@ -30,10 +24,6 @@ public class OrderAcceptedHandler : IHandleMessages<OrderAccepted>
 
     Task ThisIsntGoingToScaleWell()
     {
-        return Task.Delay(random.Next(250, 350));
+        return Task.Delay(Random.Shared.Next(250, 350));
     }
-
-    readonly ILogger logger;
-
-    static readonly Random random = new Random();
 }

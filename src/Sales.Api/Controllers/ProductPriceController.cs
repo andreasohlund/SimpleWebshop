@@ -1,44 +1,36 @@
-﻿namespace Sales.Api.Controllers
-{
-    using System;
-    using System.Linq;
-    using Microsoft.AspNetCore.Mvc;
-    using Sales.Api.Data;
+﻿namespace Sales.Api.Controllers;
+
+using System;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using Sales.Api.Data;
     
-    [Route("product")]
-    public class ProductPriceController : Controller
+[Route("product")]
+public class ProductPriceController(SalesDbContext context) : Controller
+{
+    [HttpGet("{id}", Name = "GetProduct")]
+    public IActionResult GetById(long id)
     {
-        readonly SalesDbContext context;
-
-        public ProductPriceController(SalesDbContext context)
+        var item = context.ProductPrices.FirstOrDefault(t => t.Id == id);
+        if (item == null)
         {
-            this.context = context;
+            return NotFound();
         }
 
-        [HttpGet("{id}", Name = "GetProduct")]
-        public IActionResult GetById(long id)
-        {
-            var item = context.ProductPrices.FirstOrDefault(t => t.Id == id);
-            if (item == null)
-            {
-                return NotFound();
-            }
+        return new ObjectResult(item);
+    }
 
-            return new ObjectResult(item);
+    [HttpGet]
+    public IActionResult GetById(string productIds)
+    {
+        if (productIds == null)
+        {
+            return NotFound();
         }
 
-        [HttpGet]
-        public IActionResult GetById(string productIds)
-        {
-            if (productIds == null)
-            {
-                return NotFound();
-            }
-
-            var productIdList = productIds.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
-                .Select(int.Parse).ToList();
-            var productsList = context.ProductPrices.Where(p => productIdList.Contains(p.ProductId)).ToList();
-            return new ObjectResult(productsList);
-        }
+        var productIdList = productIds.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+            .Select(int.Parse).ToList();
+        var productsList = context.ProductPrices.Where(p => productIdList.Contains(p.ProductId)).ToList();
+        return new ObjectResult(productsList);
     }
 }

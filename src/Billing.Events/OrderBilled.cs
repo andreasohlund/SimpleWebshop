@@ -1,10 +1,9 @@
-﻿namespace Billing.Events
-{
-    using NServiceBus;
+﻿namespace Billing.Events;
 
-    public class OrderBilled : IEvent
-    {
-        public string OrderId { get; set; }
-        public int ProductId { get; set; }
-    }
+using NServiceBus;
+
+public class OrderBilled : IEvent
+{
+    public string OrderId { get; set; }
+    public int ProductId { get; set; }
 }

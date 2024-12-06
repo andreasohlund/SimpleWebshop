@@ -7,15 +7,8 @@ using NServiceBus;
 using Sales.Internal;
 using ServiceComposer.AspNetCore;
 
-public class BuyItemPostHandler : ICompositionRequestsHandler
+public class BuyItemPostHandler(IMessageSession messageSession) : ICompositionRequestsHandler
 {
-    readonly IMessageSession session;
-
-    public BuyItemPostHandler(IMessageSession messageSession)
-    {
-        session = messageSession;
-    }
-
     [HttpPost("/products/buyitem/{id}")]
     public async Task Handle(HttpRequest request)
     {
@@ -23,7 +16,7 @@ public class BuyItemPostHandler : ICompositionRequestsHandler
 
         var orderId = Guid.NewGuid().ToString();
 
-        await session.Send(new PlaceOrder
+        await messageSession.Send(new PlaceOrder
         {
             OrderId = "EShop-" + orderId,
             ProductId = int.Parse(productId)

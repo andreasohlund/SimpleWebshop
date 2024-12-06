@@ -6,15 +6,8 @@ using Sales.Api.Models;
 using Sales.Events;
 using Sales.Internal;
 
-public class StoreOrderHandler : IHandleMessages<StoreOrder>
+public class StoreOrderHandler(SalesDbContext dbContext) : IHandleMessages<StoreOrder>
 {
-    readonly SalesDbContext dbContext;
-
-    public StoreOrderHandler(SalesDbContext dbContext)
-    {
-        this.dbContext = dbContext;
-    }
-
     public async Task Handle(StoreOrder message, IMessageHandlerContext context)
     {
         await dbContext.OrderDetails.AddAsync(new OrderDetail

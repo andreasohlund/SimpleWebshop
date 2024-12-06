@@ -1,29 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
-	</PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="NServiceBus" Version="8.0.3" />
-		<PackageReference Include="NServiceBus.Extensions.Hosting" Version="2.0.0" />
-		<PackageReference Include="NServiceBus.Heartbeat" Version="4.0.0" />
-		<PackageReference Include="NServiceBus.Persistence.AzureTable" Version="5.0.1" />
-		<PackageReference Include="NServiceBus.SagaAudit" Version="4.0.0" />
-		<PackageReference Include="NServiceBus.Metrics.ServiceControl" Version="4.0.0" />
-		<PackageReference Include="NServiceBus.Newtonsoft.Json" Version="3.0.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.5" />
-		<PackageReference Include="NServiceBus.Transport.AzureServiceBus" Version="3.2.0" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="NServiceBus" Version="9.*"/>
+        <PackageReference Include="NServiceBus.Extensions.Hosting" Version="3.*"/>
+        <PackageReference Include="NServiceBus.RabbitMQ" Version="9.*"/>
+        <PackageReference Include="NServiceBus.ServicePlatform.Connector" Version="3.*" />
+        <PackageReference Include="NServiceBus.SagaAudit" Version="5.*" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.*"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.*"/>
+    </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\Billing.Events\Billing.Events.csproj" />
-		<ProjectReference Include="..\Marketing.Events\Marketing.Events.csproj" />
-		<ProjectReference Include="..\Marketing.Internal\Marketing.Internal.csproj" />
-		<ProjectReference Include="..\Sales.Events\Sales.Events.csproj" />
-		<ProjectReference Include="..\Sales.Internal\Sales.Internal.csproj" />
-		<ProjectReference Include="..\Shipping.Internal\Shipping.Internal.csproj" />
-	</ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Billing.Events\Billing.Events.csproj"/>
+        <ProjectReference Include="..\Marketing.Events\Marketing.Events.csproj"/>
+        <ProjectReference Include="..\Marketing.Internal\Marketing.Internal.csproj"/>
+        <ProjectReference Include="..\Sales.Events\Sales.Events.csproj"/>
+        <ProjectReference Include="..\Sales.Internal\Sales.Internal.csproj"/>
+        <ProjectReference Include="..\Shipping.Internal\Shipping.Internal.csproj"/>
+    </ItemGroup>
 
 </Project>

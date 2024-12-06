@@ -4,15 +4,8 @@ using NServiceBus;
 using Sales.Api.Data;
 using Sales.Internal;
 
-public class CancelOrderHandler : IHandleMessages<CancelOrder>
+public class CancelOrderHandler(SalesDbContext dbContext) : IHandleMessages<CancelOrder>
 {
-    readonly SalesDbContext dbContext;
-
-    public CancelOrderHandler(SalesDbContext dbContext)
-    {
-        this.dbContext = dbContext;
-    }
-
     public async Task Handle(CancelOrder message, IMessageHandlerContext context)
     {
         // Find Order and update the database.

@@ -1,25 +1,24 @@
-﻿namespace ITOps.ViewModelComposition
+﻿namespace ITOps.ViewModelComposition;
+
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+
+public class CamelCaseToPascalSettings
 {
-    using System.Collections.Generic;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Serialization;
+    static JsonSerializerSettings settings;
 
-    public class CamelCaseToPascalSettings
+    static CamelCaseToPascalSettings()
     {
-        static JsonSerializerSettings settings;
-
-        static CamelCaseToPascalSettings()
+        settings = new JsonSerializerSettings()
         {
-            settings = new JsonSerializerSettings()
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                Converters = new List<JsonConverter> { new PascalCaseExpandoObjectConverter() }
-            };
-        }
+            ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            Converters = new List<JsonConverter> { new PascalCaseExpandoObjectConverter() }
+        };
+    }
 
-        public static JsonSerializerSettings GetSerializerSettings()
-        {
-            return settings;
-        }
+    public static JsonSerializerSettings GetSerializerSettings()
+    {
+        return settings;
     }
 }

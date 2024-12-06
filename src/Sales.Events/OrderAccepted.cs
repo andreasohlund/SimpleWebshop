@@ -1,10 +1,9 @@
-﻿namespace Sales.Events
-{
-    using NServiceBus;
+﻿namespace Sales.Events;
 
-    public class OrderAccepted : IEvent
-    {
-        public string OrderId { get; set; }
-        public int ProductId { get; set; }
-    }
+using NServiceBus;
+
+public class OrderAccepted : IEvent
+{
+    public string OrderId { get; set; }
+    public int ProductId { get; set; }
 }
