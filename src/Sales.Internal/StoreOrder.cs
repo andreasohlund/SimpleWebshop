@@ -1,12 +1,11 @@
-﻿namespace Sales.Internal
-{
-    using System;
-    using NServiceBus;
+﻿namespace Sales.Internal;
 
-    public class StoreOrder : ICommand
-    {
-        public string OrderId { get; set; }
-        public int ProductId { get; set; }
-        public DateTime OrderPlacedOn { get; set; }
-    }
+using System;
+using NServiceBus;
+
+public class StoreOrder : ICommand
+{
+    public string OrderId { get; set; }
+    public int ProductId { get; set; }
+    public DateTime OrderPlacedOn { get; set; }
 }

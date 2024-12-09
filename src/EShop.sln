@@ -49,7 +49,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0C791292-D6AA-46ED-B763-63045BA382B9}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		..\deploy.sh = ..\deploy.sh
 		Directory.Build.props = Directory.Build.props
 		..\README.md = ..\README.md
 	EndProjectSection

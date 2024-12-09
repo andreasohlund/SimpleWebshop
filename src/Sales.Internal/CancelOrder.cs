@@ -1,9 +1,8 @@
-﻿namespace Sales.Internal
-{
-    using NServiceBus;
+﻿namespace Sales.Internal;
 
-    public class CancelOrder : ICommand
-    {
-        public string OrderId { get; set; }
-    }
+using NServiceBus;
+
+public class CancelOrder : ICommand
+{
+    public string OrderId { get; set; }
 }
