@@ -6,7 +6,7 @@ using Newtonsoft.Json.Serialization;
 
 public class CamelCaseToPascalSettings
 {
-    static JsonSerializerSettings settings;
+    static readonly JsonSerializerSettings settings;
 
     static CamelCaseToPascalSettings()
     {

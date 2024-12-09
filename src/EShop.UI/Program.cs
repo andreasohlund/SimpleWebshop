@@ -1,23 +1,11 @@
-﻿namespace EShop.UI;
-
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-using NServiceBus;
+﻿using EShop.UI;
 using ITOps.Shared;
 
-public class Program
-{
-    public static async Task Main(string[] args)
-    {
-        Console.Title = "WebHost";
+Console.Title = "EShop";
 
-        await CreateHostBuilder(args)
-            .Build()
-            .RunAsync();
-    }
+using var host = Host.CreateDefaultBuilder(args)
+    .UseNServiceBus(_ => EShopEndpointConfiguration.Create("EShop.UI"))
+    .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>())
+    .Build();
 
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-        .UseNServiceBus(_ => EShopEndpointConfiguration.Create("EShop.UI"))
-        .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
-}
+await host.RunAsync();

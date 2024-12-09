@@ -6,15 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Shipping.Api.Data;
 
 [Route("product")]
-public class StockItemsStatusController : Controller
+public class StockItemsStatusController(StockItemDbContext context) : Controller
 {
-    readonly StockItemDbContext context;
-
-    public StockItemsStatusController(StockItemDbContext context)
-    {
-        this.context = context;
-    }
-
     [HttpGet("{id}", Name = "GetProduct")]
     public IActionResult GetById(int id)
     {

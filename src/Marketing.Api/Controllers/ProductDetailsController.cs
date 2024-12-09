@@ -4,15 +4,8 @@ using Marketing.Api.Data;
 using Microsoft.AspNetCore.Mvc;
 
 [Route("product")]
-public class ProductDetailsController : Controller
+public class ProductDetailsController(ProductDetailsDbContext context) : Controller
 {
-    readonly ProductDetailsDbContext context;
-
-    public ProductDetailsController(ProductDetailsDbContext context)
-    {
-        this.context = context;
-    }
-
     [HttpGet("{id}", Name = "GetProduct")]
     public IActionResult GetById(int id)
     {

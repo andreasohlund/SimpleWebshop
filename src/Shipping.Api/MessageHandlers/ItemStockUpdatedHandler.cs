@@ -5,17 +5,9 @@ using NServiceBus.Logging;
 using Shipping.Api.Data;
 using Warehouse.Azure;
 
-public class ItemStockUpdatedHandler : IHandleMessages<ItemStockUpdated>
+public class ItemStockUpdatedHandler(ILogger<ItemStockUpdatedHandler> logger, StockItemDbContext dbContext)
+    : IHandleMessages<ItemStockUpdated>
 {
-    readonly ILogger logger;
-    readonly StockItemDbContext dbContext;
-
-    public ItemStockUpdatedHandler(ILogger<ItemStockUpdatedHandler> logger, StockItemDbContext dbContext)
-    {
-        this.logger = logger;
-        this.dbContext = dbContext;
-    }
-
     public async Task Handle(ItemStockUpdated message, IMessageHandlerContext context)
     {
         logger.LogInformation($"Product Id: '{message.ProductId}', Availability: {message.IsAvailable}");

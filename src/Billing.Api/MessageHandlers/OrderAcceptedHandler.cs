@@ -8,22 +8,15 @@ public class OrderAcceptedHandler(ILogger<OrderAcceptedHandler> logger) : IHandl
 {
     public async Task Handle(OrderAccepted message, IMessageHandlerContext context)
     {
-        // Simulate some work
-        await Task.Delay(Random.Shared.Next(25, 50), context.CancellationToken);
-
-        logger.LogInformation($"Order '{message.OrderId}' has been accepted, make sure the payment goes through.");
-
-        await ThisIsntGoingToScaleWell();
+        logger.LogInformation($"Order '{message.OrderId}' has been accepted, making sure the payment goes through.");
+        
+        // simulate performing the payment
+        await Task.Delay(Random.Shared.Next(250, 350), context.CancellationToken);
 
         await context.Publish(new OrderBilled
         {
             OrderId = message.OrderId,
             ProductId = message.ProductId
         });
-    }
-
-    Task ThisIsntGoingToScaleWell()
-    {
-        return Task.Delay(Random.Shared.Next(250, 350));
     }
 }

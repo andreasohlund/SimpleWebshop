@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Marketing.Api": {
+    "Billing.Api": {
       "commandName": "Project",
       "launchBrowser": false,
       "environmentVariables": {
