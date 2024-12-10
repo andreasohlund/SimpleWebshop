@@ -12,10 +12,10 @@ public class StoreOrderHandler(SalesDbContext dbContext) : IHandleMessages<Store
     {
         await dbContext.OrderDetails.AddAsync(new OrderDetail
         {
+            OrderId = message.OrderId,
             ProductId = message.ProductId,
             OrderPlacedOn = message.OrderPlacedOn,
             IsOrderAccepted = false,
-            OrderId = message.OrderId,
             Price = GetPriceFor(message.ProductId)
         }, context.CancellationToken);
 

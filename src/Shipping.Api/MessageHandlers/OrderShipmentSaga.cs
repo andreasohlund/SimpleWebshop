@@ -24,13 +24,6 @@ public class OrderShipmentSaga(ILogger<OrderShipmentSaga> logger) : Saga<OrderSh
         return Task.CompletedTask;
     }
 
-    protected override void ConfigureHowToFindSaga(SagaPropertyMapper<OrderShipmentSaga.State> mapper)
-    {
-        mapper.MapSaga(saga => saga.OrderId)
-            .ToMessage<OrderBilled>(message => message.OrderId)
-            .ToMessage<OrderAccepted>(message => message.OrderId);
-    }
-
     void CompleteSagaIfBothEventsReceived()
     {
         if (!Data.IsOrderBilled || !Data.IsOrderAccepted)
@@ -42,6 +35,13 @@ public class OrderShipmentSaga(ILogger<OrderShipmentSaga> logger) : Saga<OrderSh
             $"Order '{Data.OrderId}' is ready to ship as both OrderAccepted and OrderBilled events has been received.");
 
         MarkAsComplete();
+    }
+
+    protected override void ConfigureHowToFindSaga(SagaPropertyMapper<OrderShipmentSaga.State> mapper)
+    {
+        mapper.MapSaga(saga => saga.OrderId)
+            .ToMessage<OrderBilled>(message => message.OrderId)
+            .ToMessage<OrderAccepted>(message => message.OrderId);
     }
 
     public class State : ContainSagaData

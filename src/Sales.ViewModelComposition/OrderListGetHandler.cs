@@ -20,12 +20,13 @@ class OrderListGetHandler(HttpClient httpClient) : ICompositionRequestsHandler
         var ordersViewModel = MapToViewModelDictionary(orders);
 
         var context = request.GetCompositionContext();
-        var vm = request.GetComposedResponseModel();
 
         await context.RaiseEvent(new OrdersLoaded
         {
             OrdersViewModel = ordersViewModel
         });
+
+        var vm = request.GetComposedResponseModel();
 
         vm.Orders = ordersViewModel.Values;
     }
@@ -37,12 +38,14 @@ class OrderListGetHandler(HttpClient httpClient) : ICompositionRequestsHandler
         foreach (var order in orders)
         {
             dynamic orderDetailObject = new ExpandoObject();
+
             orderDetailObject.OrderId = order.OrderId;
             orderDetailObject.Price = order.Price;
             orderDetailObject.OrderPlacedOn = order.OrderPlacedOn;
             orderDetailObject.IsOrderAccepted = order.IsOrderAccepted;
             orderDetailObject.IsOrderCancelled = order.IsOrderCancelled;
             orderDetailObject.ProductId = order.ProductId;
+
             dictionary[order.OrderId] = orderDetailObject;
         }
 
