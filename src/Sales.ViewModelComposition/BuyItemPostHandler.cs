@@ -13,7 +13,7 @@ public class BuyItemPostHandler(IMessageSession messageSession) : ICompositionRe
     public async Task Handle(HttpRequest request)
     {
         var productId = (string)request.HttpContext.GetRouteData().Values["id"];
-        var orderId = (string)request.HttpContext.Request.Form["order-id"];
+        var orderId = request.HttpContext.Request.Form["order-id"];
         
         await messageSession.Send(new PlaceOrder
         {

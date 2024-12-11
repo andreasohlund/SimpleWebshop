@@ -12,8 +12,8 @@ public class BuyItemPostHandler(IMessageSession messageSession) : ICompositionRe
     [HttpPost("/products/buyitem/{id}")]
     public async Task Handle(HttpRequest request)
     {
-        var orderId = (string)request.HttpContext.Request.Form["order-id"];
-        var shippingOption = (string)request.HttpContext.Request.Form["shipping-option"];
+        var orderId = request.HttpContext.Request.Form["order-id"];
+        var shippingOption = request.HttpContext.Request.Form["shipping-option"];
         
         await messageSession.Send(new RegisterShippingDetails
         {
