@@ -73,12 +73,7 @@ public static class EShopEndpointConfiguration
     static void ConfigureRouting<T>(RoutingSettings<T> routing)
         where T : TransportDefinition
     {
-        routing.RouteToEndpoint(typeof(PlaceOrder), "Sales.Api");
-        routing.RouteToEndpoint(typeof(CancelOrder), "Sales.Api");
-        routing.RouteToEndpoint(typeof(StoreOrder), "Sales.Api");
-        routing.RouteToEndpoint(typeof(AcceptOrder), "Sales.Api");
-        routing.RouteToEndpoint(typeof(RecordConsumerBehavior), "Marketing.Api");
-
-        // For transports that do not support publish/subcribe natively, e.g. MSMQ, SqlTransport, call RegisterPublisher
+        routing.RouteToEndpoint(typeof(PlaceOrder).Assembly, "Sales.Api");
+        routing.RouteToEndpoint(typeof(RecordConsumerBehavior).Assembly, "Marketing.Api");
     }
 }

@@ -4,7 +4,7 @@ using Billing.Events;
 using NServiceBus;
 using Sales.Events;
 
-public class OrderShipmentSaga(ILogger<OrderShipmentSaga> logger) : Saga<OrderShipmentSaga.State>,
+public class ShippingPolicy(ILogger<ShippingPolicy> logger) : Saga<ShippingPolicy.State>,
     IAmStartedByMessages<OrderBilled>,
     IAmStartedByMessages<OrderAccepted>
 {
@@ -37,7 +37,7 @@ public class OrderShipmentSaga(ILogger<OrderShipmentSaga> logger) : Saga<OrderSh
         MarkAsComplete();
     }
 
-    protected override void ConfigureHowToFindSaga(SagaPropertyMapper<OrderShipmentSaga.State> mapper)
+    protected override void ConfigureHowToFindSaga(SagaPropertyMapper<ShippingPolicy.State> mapper)
     {
         mapper.MapSaga(saga => saga.OrderId)
             .ToMessage<OrderBilled>(message => message.OrderId)
