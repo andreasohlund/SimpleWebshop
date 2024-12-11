@@ -4,10 +4,10 @@ using NServiceBus;
 using Sales.Events;
 using Sales.Internal;
 
-public class OrderAcceptancePolicySaga(ILogger<OrderAcceptancePolicySaga> logger) : Saga<OrderAcceptancePolicySaga.State>,
+public class ShippingPolicy(ILogger<ShippingPolicy> logger) : Saga<ShippingPolicy.State>,
     IAmStartedByMessages<PlaceOrder>,
     IAmStartedByMessages<CancelOrder>,
-    IHandleTimeouts<OrderAcceptancePolicySaga.BuyersRemorseIsOver>
+    IHandleTimeouts<ShippingPolicy.BuyersRemorseIsOver>
 {
     public async Task Handle(PlaceOrder message, IMessageHandlerContext context)
     {
@@ -48,7 +48,7 @@ public class OrderAcceptancePolicySaga(ILogger<OrderAcceptancePolicySaga> logger
         });
     }
 
-    protected override void ConfigureHowToFindSaga(SagaPropertyMapper<OrderAcceptancePolicySaga.State> mapper)
+    protected override void ConfigureHowToFindSaga(SagaPropertyMapper<ShippingPolicy.State> mapper)
     {
         mapper.MapSaga(saga => saga.OrderId)
             .ToMessage<PlaceOrder>(message => message.OrderId)
