@@ -37,10 +37,11 @@ public class ShippingOptionsGetHandler : ICompositionRequestsHandler
 }
 ```
 
+Run the UI to see that it works.
+
 ## Send a command to register shipping options
 
 Teacher: Who should sent this command? What are the downsides of pushing this via an event? Refer to Putting your events on a diet talk
-
 
 ### Add command
 
@@ -49,7 +50,7 @@ Teacher: Who should sent this command? What are the downsides of pushing this vi
 ```
 namespace Shipping.Internal;
 
-public class RegisterShippingDetails :ICommand
+public class RegisterShippingDetails : ICommand
 {
     public string OrderId { get; set; }
     public string ShippingOption { get; set; }
@@ -86,7 +87,7 @@ public class BuyItemPostHandler(IMessageSession messageSession) : ICompositionRe
 
 ### Add it to the view model
 
-In Sales.ViewModelComposition modify the ProductGetHandler by adding
+In Sales.ViewModelComposition modify the ProductDetailsGetHandler by adding
 
 ```
 vm.OrderId = Guid.NewGuid().ToString();
@@ -97,7 +98,7 @@ vm.OrderId = Guid.NewGuid().ToString();
 
 In Details.cshtml add:
 
-`<input type="hidden" name="order-id" value="@Model.OrderId"/>``
+`<input type="hidden" name="order-id" value="@Model.OrderId"/>`
 
 to the form.
 
@@ -106,7 +107,6 @@ to the form.
 Update all BuyItemPostHandler to:
 
 `var orderId = request.HttpContext.Request.Form["order-id"];`
-
 
 ## Handle the command
 
@@ -117,7 +117,7 @@ Update all BuyItemPostHandler to:
 ```    
 public Task Handle(RegisterShippingDetails message, IMessageHandlerContext context)
 {
-    logger.LogInformation($"Shipping provider for  '{message.OrderId}' has been set to '{message.ShippingOption}'");
+    logger.LogInformation($"Shipping provider for '{message.OrderId}' has been set to '{message.ShippingOption}'");
     Data.ShippingProvider = message.ShippingOption;
     CompleteSagaIfAllDetailsArePresent();
     return Task.CompletedTask;
@@ -130,8 +130,16 @@ public Task Handle(RegisterShippingDetails message, IMessageHandlerContext conte
 1. Modify the complete criteria:
 
 ```
- if (!Data.IsOrderBilled || !Data.IsOrderAccepted || string.IsNullOrEmpty(Data.ShippingProvider))
+void CompleteSagaIfAllDetailsArePresent()
 {
-    return;
+    if (!Data.IsOrderBilled || !Data.IsOrderAccepted || string.IsNullOrEmpty(Data.ShippingProvider))
+    {
+        return;
+    }
+
+    logger.LogInformation(
+        $"Order '{Data.OrderId}' is ready to ship with {Data.ShippingProvider} as both OrderAccepted and OrderBilled events has been received.");
+
+    MarkAsComplete();
 }
 ```
