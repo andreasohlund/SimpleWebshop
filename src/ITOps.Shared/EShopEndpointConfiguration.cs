@@ -20,10 +20,7 @@ public static class EShopEndpointConfiguration
 
         // Persistence Configuration
         endpointConfiguration.UsePersistence<LearningPersistence>();
-
-        //endpointConfiguration.UsePersistence<AzureTablePersistence>()
-        //    .ConnectionString(Environment.GetEnvironmentVariable("SimpleEShopStorageConnectionString"));
-
+        
         endpointConfiguration.EnableInstallers();
 
         // JSON Serializer
