@@ -4,7 +4,7 @@ using ITOps.Shared;
 Console.Title = "EShop";
 
 using var host = Host.CreateDefaultBuilder(args)
-    .UseNServiceBus(_ => EShopEndpointConfiguration.Create("EShop.UI"))
+    .UseEShopNServiceBusEndpoint("EShop.UI")
     .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>())
     .Build();
 

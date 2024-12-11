@@ -7,7 +7,7 @@ Console.Title = "Sales";
 SalesDbContext.SeedDatabase();
 
 using var host = Host.CreateDefaultBuilder(args)
-    .UseNServiceBus(_ => EShopEndpointConfiguration.Create("Sales.Api"))
+    .UseEShopNServiceBusEndpoint("Sales.Api")
     .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>())
     .Build();
 
