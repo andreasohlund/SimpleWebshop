@@ -5,15 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Sales.Events.ViewModelComposition;
 using ServiceComposer.AspNetCore;
 
-public class OrdersListGetHandler : ICompositionEventsSubscriber
+public class OrdersListGetHandler(HttpClient httpClient) : ICompositionEventsSubscriber
 {
-    readonly HttpClient httpClient;
-
-    public OrdersListGetHandler(HttpClient httpClient)
-    {
-        this.httpClient = httpClient;
-    }
-
     [HttpGet("/orders")]
     public void Subscribe(ICompositionEventsPublisher publisher)
     {
