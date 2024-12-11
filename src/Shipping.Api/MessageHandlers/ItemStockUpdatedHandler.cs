@@ -1,9 +1,9 @@
-﻿namespace Shipping.Api.MessageHandlers;
+﻿using Shipping.Internal;
+
+namespace Shipping.Api.MessageHandlers;
 
 using NServiceBus;
-using NServiceBus.Logging;
 using Shipping.Api.Data;
-using Warehouse.Azure;
 
 public class ItemStockUpdatedHandler(ILogger<ItemStockUpdatedHandler> logger, StockItemDbContext dbContext)
     : IHandleMessages<ItemStockUpdated>

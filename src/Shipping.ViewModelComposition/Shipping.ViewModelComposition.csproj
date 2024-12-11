@@ -2,13 +2,12 @@
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
-        
     </PropertyGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\ITOps.ViewModelComposition\ITOps.ViewModelComposition.csproj"/>
         <ProjectReference Include="..\Marketing.Events\Marketing.Events.csproj"/>
-        <ProjectReference Include="..\Shipping.Internal\Shipping.Internal.csproj" />
+        <ProjectReference Include="..\Shipping.Internal\Shipping.Internal.csproj"/>
     </ItemGroup>
 
 </Project>
