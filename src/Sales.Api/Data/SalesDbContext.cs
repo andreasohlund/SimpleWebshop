@@ -10,13 +10,13 @@ public class SalesDbContext : DbContext
         optionsBuilder.UseInMemoryDatabase("sales");
     }
 
-    internal static void SeedDatabase()
+    public static void SeedDatabase()
     {
         var context = new SalesDbContext();
 
-        context.ProductPrices.Add(new ProductPrice { Id = 1, Price = new decimal(1291.61), ProductId = 1 });
-        context.ProductPrices.Add(new ProductPrice { Id = 2, Price = new decimal(1697.71), ProductId = 2 });
-        context.ProductPrices.Add(new ProductPrice { Id = 3, Price = new decimal(169.11), ProductId = 3 });
+        context.ProductPrices.Add(new ProductPrice { Id = 1, Price = new decimal(1291.61), ProductId = "1" });
+        context.ProductPrices.Add(new ProductPrice { Id = 2, Price = new decimal(1697.71), ProductId = "2" });
+        context.ProductPrices.Add(new ProductPrice { Id = 3, Price = new decimal(169.11), ProductId = "3" });
 
         context.SaveChanges();
     }

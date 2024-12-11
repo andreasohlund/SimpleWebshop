@@ -29,7 +29,7 @@ public class StoreOrderHandler(SalesDbContext dbContext) : IHandleMessages<Store
         });
     }
 
-    decimal GetPriceFor(int productId)
+    decimal GetPriceFor(string productId)
     {
         var price = dbContext.ProductPrices.Where(p => p.ProductId == productId)
             .Select(productPrice => productPrice.Price).First();

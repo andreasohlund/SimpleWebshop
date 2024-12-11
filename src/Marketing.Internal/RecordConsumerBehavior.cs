@@ -4,6 +4,6 @@
 
     public class RecordConsumerBehavior : ICommand
     {
-        public int ProductId { get; set; }
+        public string ProductId { get; set; }
     }
 }

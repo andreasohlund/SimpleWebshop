@@ -22,7 +22,7 @@ class ProductListGetHandler(HttpClient httpClient) : ICompositionEventsSubscribe
 
             foreach (dynamic productStockStatus in productStockList)
             {
-                @event.AvailableProductsViewModel[productStockStatus.Id].InStock = productStockStatus.InStock;
+                @event.AvailableProductsViewModel[productStockStatus.ProductId].InStock = productStockStatus.InStock;
             }
         });
     }

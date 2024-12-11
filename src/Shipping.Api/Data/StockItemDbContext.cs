@@ -16,9 +16,9 @@ public class StockItemDbContext : DbContext
     {
         var context = new StockItemDbContext();
 
-        context.StockItems.Add(new StockItem { Id = 1, InStock = true, ProductId = 1 });
-        context.StockItems.Add(new StockItem { Id = 2, InStock = true, ProductId = 2 });
-        context.StockItems.Add(new StockItem { Id = 3, InStock = false, ProductId = 3 });
+        context.StockItems.Add(new StockItem { Id = 1, InStock = true, ProductId = "1" });
+        context.StockItems.Add(new StockItem { Id = 2, InStock = true, ProductId = "2" });
+        context.StockItems.Add(new StockItem { Id = 3, InStock = false, ProductId = "3" });
 
         context.SaveChanges();
     }

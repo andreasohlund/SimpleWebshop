@@ -4,7 +4,7 @@ using ITOps.Shared;
 using NServiceBus;
 using Sales.Internal;
 
-internal class LoadGeneratorProgram
+public static class LoadGeneratorProgram
 {
     static async Task Main()
     {
@@ -57,18 +57,12 @@ internal class LoadGeneratorProgram
         }
     }
 
-    class MessageProducer
+    class MessageProducer(IEndpointInstance endpoint)
     {
-        readonly IEndpointInstance endpoint;
         int currentOrderId;
         int messagesPerSecond = 1;
         bool paused;
         bool running = true;
-
-        public MessageProducer(IEndpointInstance endpoint)
-        {
-            this.endpoint = endpoint;
-        }
 
         public async Task Run()
         {
@@ -121,7 +115,7 @@ internal class LoadGeneratorProgram
         {
             var orderIdNumber = Interlocked.Increment(ref currentOrderId);
             var orderId = "LoadGen-" + orderIdNumber;
-            var productId = (orderIdNumber + 2) % 3 + 1;
+            var productId = $"{(orderIdNumber + 2) % 3 + 1}";
             if (output)
             {
                 Console.WriteLine($"Sending PlaceOrder message: OrderId '{orderId}', ProductId = {productId}");

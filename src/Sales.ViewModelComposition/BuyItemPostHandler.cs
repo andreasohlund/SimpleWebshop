@@ -19,7 +19,7 @@ public class BuyItemPostHandler(IMessageSession messageSession) : ICompositionRe
         await messageSession.Send(new PlaceOrder
         {
             OrderId = "EShop-" + orderId,
-            ProductId = int.Parse(productId)
+            ProductId = productId
         });
     }
 }

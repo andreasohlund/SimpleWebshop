@@ -7,20 +7,13 @@ using Microsoft.AspNetCore.Routing;
 using NServiceBus;
 using ServiceComposer.AspNetCore;
 
-public class BuyItemPostHandler : ICompositionRequestsHandler
+public class BuyItemPostHandler(IMessageSession messageSession) : ICompositionRequestsHandler
 {
-    readonly IMessageSession session;
-
-    public BuyItemPostHandler(IMessageSession messageSession)
-    {
-        session = messageSession;
-    }
-
     [HttpPost("/products/buyitem/{id}")]
     public async Task Handle(HttpRequest request)
     {
         var productId = (string)request.HttpContext.GetRouteData().Values["id"];
 
-        await session.Send(new RecordConsumerBehavior { ProductId = int.Parse(productId) });
+        await messageSession.Send(new RecordConsumerBehavior { ProductId = productId });
     }
 }

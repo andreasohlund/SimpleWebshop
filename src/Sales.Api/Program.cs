@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-using NServiceBus;
-using ITOps.Shared;
+﻿using ITOps.Shared;
 using Sales.Api;
 using Sales.Api.Data;
 

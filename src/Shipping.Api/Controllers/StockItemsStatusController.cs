@@ -9,7 +9,7 @@ using Shipping.Api.Data;
 public class StockItemsStatusController(StockItemDbContext context) : Controller
 {
     [HttpGet("{id}", Name = "GetProduct")]
-    public IActionResult GetById(int id)
+    public IActionResult GetById(string id)
     {
         var item = context.StockItems.FirstOrDefault(t => t.ProductId == id);
         if (item == null)
@@ -21,7 +21,7 @@ public class StockItemsStatusController(StockItemDbContext context) : Controller
     }
 
     [HttpGet]
-    public IActionResult GetById(string productIds)
+    public IActionResult GetByIds(string productIds)
     {
         if (productIds == null)
         {
@@ -29,7 +29,7 @@ public class StockItemsStatusController(StockItemDbContext context) : Controller
         }
 
         var productIdList = productIds.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
-            .Select(int.Parse).ToList();
+            .ToList();
         var productsList = context.StockItems.Where(p => productIdList.Contains(p.ProductId)).ToList();
         return new ObjectResult(productsList);
     }

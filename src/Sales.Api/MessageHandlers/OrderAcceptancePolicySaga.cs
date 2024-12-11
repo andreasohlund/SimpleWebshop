@@ -62,6 +62,6 @@ public class OrderAcceptancePolicySaga(ILogger<OrderAcceptancePolicySaga> logger
     public class State : ContainSagaData
     {
         public string OrderId { get; set; }
-        public int ProductId { get; set; }
+        public string ProductId { get; set; }
     }
 }

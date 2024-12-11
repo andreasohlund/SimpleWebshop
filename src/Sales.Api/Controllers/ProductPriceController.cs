@@ -29,7 +29,7 @@ public class ProductPriceController(SalesDbContext context) : Controller
         }
 
         var productIdList = productIds.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
-            .Select(int.Parse).ToList();
+            .ToList();
         var productsList = context.ProductPrices.Where(p => productIdList.Contains(p.ProductId)).ToList();
         return new ObjectResult(productsList);
     }

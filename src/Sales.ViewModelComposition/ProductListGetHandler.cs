@@ -21,7 +21,7 @@ public class ProductListGetHandler(HttpClient httpClient) : ICompositionEventsSu
 
             foreach (dynamic productPrice in productPrices)
             {
-                @event.AvailableProductsViewModel[productPrice.Id].Price = productPrice.Price;
+                @event.AvailableProductsViewModel[productPrice.ProductId].Price = productPrice.Price;
             }
         });
     }
