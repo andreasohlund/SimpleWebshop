@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using ServiceComposer.AspNetCore;
 
-public class ProductPriceGetHandler(HttpClient httpClient) : ICompositionRequestsHandler
+public class ProductGetHandler(HttpClient httpClient) : ICompositionRequestsHandler
 {
     [HttpGet("/products/details/{id}")]
     public async Task Handle(HttpRequest request)
@@ -21,5 +21,6 @@ public class ProductPriceGetHandler(HttpClient httpClient) : ICompositionRequest
         var vm = request.GetComposedResponseModel();
 
         vm.Price = productDetails.Price;
+        vm.OrderId = Guid.NewGuid().ToString();
     }
 }

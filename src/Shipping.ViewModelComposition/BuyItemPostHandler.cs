@@ -1,10 +1,10 @@
-﻿namespace Sales.ViewModelComposition;
+﻿using NServiceBus;
+using Shipping.Internal;
+
+namespace Shipping.ViewModelComposition;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
-using NServiceBus;
-using Sales.Internal;
 using ServiceComposer.AspNetCore;
 
 public class BuyItemPostHandler(IMessageSession messageSession) : ICompositionRequestsHandler
@@ -12,13 +12,13 @@ public class BuyItemPostHandler(IMessageSession messageSession) : ICompositionRe
     [HttpPost("/products/buyitem/{id}")]
     public async Task Handle(HttpRequest request)
     {
-        var productId = (string)request.HttpContext.GetRouteData().Values["id"];
         var orderId = (string)request.HttpContext.Request.Form["order-id"];
+        var shippingOption = (string)request.HttpContext.Request.Form["shipping-option"];
         
-        await messageSession.Send(new PlaceOrder
+        await messageSession.Send(new RegisterShippingDetails
         {
             OrderId = orderId,
-            ProductId = productId
+            ShippingOption = shippingOption
         });
     }
 }

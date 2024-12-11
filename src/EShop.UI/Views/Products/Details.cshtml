@@ -4,6 +4,7 @@
 
 <div class="container-fluid">
     <form action="/products/buyitem/@Model.ProductId" method="post">
+        <input type="hidden" name="order-id" value="@Model.OrderId"/>
         <div class="row">
             <div class="col-3">
                 <img src="@Model.ImageUrl" class="img-fluid" alt="@Model.ProductName"/>
@@ -22,6 +23,14 @@
                     <p class="stock in-stock">In Stock</p>
                     <p>
                         <input type="submit" class="btn btn-success" value="Buy Now"/>
+                    </p>
+                    <p>
+                        <select name="shipping-option">
+                            @foreach (var shippingOption in Model.ShippingOptions)
+                            {
+                                <option value="@shippingOption">@shippingOption</option>
+                            }
+                        </select>
                     </p>
                 }
                 else
