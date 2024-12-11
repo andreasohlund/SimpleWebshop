@@ -14,7 +14,7 @@ public static class EShopEndpointConfiguration
 
         // Transport configuration
         var transport = endpointConfiguration.UseTransport(new LearningTransport());
-        //var transport = endpointConfiguration.UseTransport(new AzureServiceBusTransport(Environment.GetEnvironmentVariable("SimpleEShopConnectionString")));
+        //var transport = endpointConfiguration.UseTransport(new RabbitMQTransport(RoutingTopology.Conventional(QueueType.Quorum), "host=localhost"));
 
         ConfigureRouting(transport);
 
