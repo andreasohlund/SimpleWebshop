@@ -1,22 +1,10 @@
-﻿using Microsoft.Extensions.Hosting;
-
-namespace ITOps.Shared;
+﻿namespace ITOps.Shared;
 
 using Marketing.Internal;
 using NServiceBus;
 using NServiceBus.MessageMutator;
 using NServiceBus.Transport;
 using Sales.Internal;
-
-public static class HostBuilderExtensions
-{
-    public static IHostBuilder UseEShopNServiceBusEndpoint(this IHostBuilder builder, string endpointName, bool enableMonitoring = true)
-    {
-        builder.UseNServiceBus(_ => EShopEndpointConfiguration.Create(endpointName, enableMonitoring));
-
-        return builder;
-    }
-}
 
 public static class EShopEndpointConfiguration
 {
