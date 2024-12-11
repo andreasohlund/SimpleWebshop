@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using ServiceComposer.AspNetCore;
 
-public class ProductPriceGetHandler(HttpClient httpClient) : ICompositionRequestsHandler
+public class ProductDetailsGetHandler(HttpClient httpClient) : ICompositionRequestsHandler
 {
     [HttpGet("/products/details/{id}")]
     public async Task Handle(HttpRequest request)
