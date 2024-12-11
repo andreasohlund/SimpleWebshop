@@ -7,7 +7,8 @@ using Microsoft.AspNetCore.Routing;
 using NServiceBus;
 using ServiceComposer.AspNetCore;
 
-public class BuyItemPostHandler(IMessageSession messageSession) : ICompositionRequestsHandler
+public class BuyItemPostHandler(IMessageSession messageSession) 
+    : ICompositionRequestsHandler
 {
     [HttpPost("/products/buyitem/{id}")]
     public async Task Handle(HttpRequest request)

@@ -3,7 +3,8 @@
 using Marketing.Internal;
 using NServiceBus;
 
-public class RecordConsumerBehaviorHandler(ILogger<RecordConsumerBehaviorHandler> logger) : IHandleMessages<RecordConsumerBehavior>
+public class RecordConsumerBehaviorHandler(ILogger<RecordConsumerBehaviorHandler> logger) 
+    : IHandleMessages<RecordConsumerBehavior>
 {
     public async Task Handle(RecordConsumerBehavior message, IMessageHandlerContext context)
     {

@@ -25,6 +25,10 @@ public static class EShopEndpointConfiguration
 
         // JSON Serializer
         endpointConfiguration.UseSerialization<SystemJsonSerializer>();
+        
+        endpointConfiguration.Recoverability()
+            .Immediate(immediate => immediate.NumberOfRetries(0))
+            .Delayed(delayed => delayed.NumberOfRetries(0));
 
         if (enableMonitoring)
         {
