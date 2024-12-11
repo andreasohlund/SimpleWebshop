@@ -3,7 +3,6 @@
 using Microsoft.AspNetCore.Mvc;
 
 [Route("orders")]
-
 public class OrdersController : Controller
 {
     public IActionResult Index()
